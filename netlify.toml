@@ -1,0 +1,45 @@
+# Netlify configuration.
+# With this file in the repo, Netlify needs no settings filled in by hand —
+# it reads the build command and publish folder from here.
+
+[build]
+  # Regenerates index.html, products.html and product/*.html from
+  # assets/js/products.js on every deploy. So editing products.js and pushing
+  # is enough — you do not have to remember to run the build yourself.
+  command = "node build.js"
+
+  # The site is plain files at the repo root, so publish the root.
+  publish = "."
+
+[build.environment]
+  # build.js only uses Node's built-in modules, so any modern version works.
+  # Pinned so a future Netlify default change cannot break the build.
+  NODE_VERSION = "20"
+
+# Long cache for fingerprint-free static assets. Images and icons change only
+# when you replace the file, and a redeploy busts the cache anyway.
+[[headers]]
+  for = "/assets/labels/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/assets/art/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/assets/brand/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+# CSS and JS change when you edit the site, so keep these short.
+[[headers]]
+  for = "/assets/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/assets/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"

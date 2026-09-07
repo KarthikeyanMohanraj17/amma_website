@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+._*
+
+# Editors
+.vscode/
+.idea/
+
+# Node (this project has no dependencies, but just in case)
+node_modules/
+npm-debug.log*
+
+# Local env files — never commit these
+.env
+.env.*

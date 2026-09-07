@@ -1,0 +1,27 @@
+2026-09-05  kept       surface=whole-site  axis=palette
+  Palette extracted from the client's printed labels rather than generated from a
+  mood. User's brief was explicitly "not another regular website" and the brand
+  already had a strong identity in print. Sampling real pixels beat inventing.
+
+2026-09-05  kept       surface=catalogue   axis=structure
+  Per-product colour coding, driven by each label's own rail colour, with the page
+  accent following the scroll. This is the site's signature move and it came from
+  the packaging, not from a template.
+
+2026-09-05  kept       surface=catalogue   axis=hierarchy
+  Full ingredient lists set as open editorial type, never behind an accordion.
+  The argument the page makes is the ingredient list itself.
+
+2026-09-05  rejected   surface=whole-site  axis=assets
+  Openverse stock photography. Three "millet" results returned one usable grain
+  texture, a 1940s B&W photograph and a Japanese scroll painting. Not
+  commercial-food-grade; used the client's own label art instead and told the user.
+
+2026-09-05  pending-review  surface=hero  axis=density
+  Hero is a single centred statement + one illustration lifted from the Health Mix
+  label. Alternative would be a split hero with a packet shot — not buildable until
+  the user supplies real packet photography. Revisit when photos arrive.
+
+2026-09-05  pending-review  surface=catalogue  axis=density
+  Five products render as five full specimen bands. Works at five; if the range
+  grows past ~8 products this should become a compact index with detail on demand.

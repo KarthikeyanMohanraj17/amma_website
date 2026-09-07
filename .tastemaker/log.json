@@ -1,0 +1,26 @@
+{
+  "builds": [
+    {
+      "date": "2026-09-05",
+      "surface": "Adisil Organic Foods — public single-page catalogue site",
+      "macrostructure": "11-Catalogue",
+      "archetypes": {
+        "nav": "N-inline-rule",
+        "hero": "H-poster",
+        "feature": "F-specimen (custom: colour plate + open ingredient list)",
+        "how": "F4-numbered",
+        "proof": "P-credential",
+        "close": "C2-statement"
+      },
+      "arc": ["hook", "problem/stakes", "solution", "how-it-works", "proof", "close"],
+      "beatsSkipped": "none",
+      "mood": "warm",
+      "paletteSource": "extracted from client label artwork (no generator seed)",
+      "selfCritique": {
+        "showDontTell": 4, "philosophy": 5, "hierarchy": 4,
+        "specificity": 5, "restraint": 4, "variety": 4
+      },
+      "notes": "Chose Catalogue specifically to avoid the Feature Stack / rated-product-grid shape that every close competitor (Venjanam, Iyarkai Pantry, Spicy Samayals) runs on Shopify. Next build in this project must rotate away from Catalogue."
+    }
+  ]
+}
