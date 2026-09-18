@@ -14,17 +14,18 @@
 
    Why generate instead of rendering in the browser: each product gets its own
    file, so sharing a link on WhatsApp shows THAT product's photo and name, and
-   Google lists each product separately. A single template reading ?p=slug
-   cannot do either.
+   Google lists each product separately.
    ========================================================================== */
 
 'use strict';
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const { imgSize } = require('./lib/imgsize');
 
 const ROOT = __dirname;
 const rd = (...p) => fs.readFileSync(path.join(ROOT, ...p), 'utf8');
+const exists = p => fs.existsSync(path.join(ROOT, p));
 
 /* --- Load products.js by running it with a fake `window` ------------------ */
 const sandbox = { window: {} };
@@ -41,20 +42,36 @@ const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g,
   c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 const pad = n => (n < 10 ? '0' + n : String(n));
-
 const wa = msg => 'https://wa.me/' + B.whatsapp + '?text=' + encodeURIComponent(msg);
 const WA_GENERAL = wa("Hello Adisil! I saw your website and I'd like to order.");
 
 const products = D.products.filter(p => !p.hidden);
 const reviews  = (D.testimonials || []).filter(t => t && t.text);
+const samplesOn = !reviews.length && D.showSampleReviews && (D.sampleReviews || []).length;
 
-/* Intrinsic label dimensions, so the browser reserves space before load. */
-const DIMS = {
-  'health-mix': [900, 1260], 'dosai-mix': [900, 1260],
-  'karuppu-kavuni-kanji': [900, 1274], 'karupu-ulundhu-kanji': [900, 1350],
-  'mappillai-samba-kanji': [864, 1223]
-};
-const dim = s => DIMS[s] || [900, 1260];
+const icon = (n, cls) =>
+  `<svg class="icon${cls ? ' ' + cls : ''}" aria-hidden="true"><use href="#i-${n}"></use></svg>`;
+
+/* Emit a <picture> with real intrinsic dimensions read from the file itself,
+   so the browser reserves the right space and the page never jumps. */
+function pic(src, alt, o) {
+  o = o || {};
+  const dim = imgSize(path.join(ROOT, src));
+  const webp = src.replace(/\.(jpe?g|png)$/i, '.webp');
+  const useWebp = webp !== src && exists(webp);
+  const base = o.base || '';
+  const attrs = [
+    `src="${base}${src}"`,
+    dim ? `width="${dim.w}" height="${dim.h}"` : '',
+    `alt="${esc(alt)}"`,
+    o.eager ? 'fetchpriority="high" decoding="async"' : 'loading="lazy" decoding="async"',
+    o.cls ? `class="${o.cls}"` : '',
+  ].filter(Boolean).join(' ');
+  return '<picture>' +
+    (useWebp ? `<source srcset="${base}${webp}" type="image/webp">` : '') +
+    `<img ${attrs}>` +
+  '</picture>';
+}
 
 const priceOf = (p, g) => {
   const v = p.prices && p.prices[g];
@@ -64,9 +81,6 @@ const priceLabel = (p, g) => {
   const v = priceOf(p, g);
   return v === null ? 'Price on WhatsApp' : '₹' + v;
 };
-const hasAnyPrice = p => D.weights.some(g => priceOf(p, g) !== null);
-
-const icon = (n, cls) => `<svg class="icon${cls ? ' ' + cls : ''}" aria-hidden="true"><use href="#i-${n}"></use></svg>`;
 
 /* ==========================================================================
    Shared partials
@@ -83,7 +97,7 @@ function head(o) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(o.title)}</title>
 <meta name="description" content="${esc(o.description)}">
-<meta name="theme-color" content="#FDF7EC">${canonical}
+<meta name="theme-color" content="${o.themeColour || '#FDF7EC'}">${canonical}
 
 <meta property="og:type" content="${o.ogType || 'website'}">
 <meta property="og:site_name" content="Adisil Organic Foods">
@@ -105,7 +119,7 @@ document.documentElement.classList.remove('no-js');
 window.ADISIL_BASE = ${JSON.stringify(o.base)};
 </script>
 </head>
-<body${o.pageColour ? ` style="--pc:${o.pageColour}"` : ''}>
+<body${o.bodyClass ? ` class="${o.bodyClass}"` : ''}${o.pageColour ? ` style="--pc:${o.pageColour}"` : ''}>
 
 <a class="skip-link" href="#main">Skip to content</a>
 
@@ -117,20 +131,19 @@ ${SPRITE}
 
 function nav(o) {
   const on = k => (o.here === k ? ' aria-current="page"' : '');
+  const dark = o.navOnDark ? ' nav--on-dark' : '';
   return `
-<header class="nav" id="nav">
+<header class="nav${dark}" id="nav">
   <div class="wrap nav__inner">
     <a class="nav__logo" href="${o.base}index.html">
-      <img src="${o.base}assets/brand/logo.png" alt="Adisil Organic Foods" width="75" height="42" fetchpriority="high">
-      <span class="nav__logo-text">
-        <b>Adisil</b>
-        <span>Organic Food</span>
-      </span>
+      <img class="nav__logo-dark" src="${o.base}assets/brand/logo.png" alt="Adisil Organic Foods" width="461" height="258" fetchpriority="high">
+      <img class="nav__logo-light" src="${o.base}assets/brand/logo-light.png" alt="" aria-hidden="true" width="461" height="258">
+      <span class="nav__logo-text"><b>Adisil</b><span>Organic Food</span></span>
     </a>
     <nav class="nav__links" aria-label="Main">
       <a href="${o.base}products.html"${on('products')}>All products</a>
-      <a href="${o.base}index.html#why">Why it keeps 3 months</a>
-      <a href="${o.base}index.html#order">How to order</a>
+      <a href="${o.base}index.html#enquiry">Bulk &amp; enquiries</a>
+      <a href="${o.base}index.html#faq">Questions</a>
     </nav>
     <button type="button" class="cart-btn" data-cart-open aria-haspopup="dialog">
       ${icon('shopping-bag')}
@@ -142,48 +155,57 @@ function nav(o) {
 `;
 }
 
-/* The cart drawer and the floating WhatsApp button appear on every page. */
+/* The order drawer, the sticky order bar, the floating WhatsApp button and the
+   one polite live region — present on every page. */
 function chrome(o) {
   return `
+<div class="sr-only" role="status" aria-live="polite" data-live></div>
+
 <div class="drawer" id="cart" role="dialog" aria-modal="true" aria-labelledby="cart-title" hidden>
   <div class="drawer__scrim" data-cart-close></div>
   <div class="drawer__panel">
     <header class="drawer__head">
       <h2 id="cart-title">Your order</h2>
-      <button type="button" class="drawer__close" data-cart-close aria-label="Close order list">
-        ${icon('x')}
-      </button>
+      <button type="button" class="drawer__close" data-cart-close aria-label="Close order list">${icon('x')}</button>
     </header>
-
     <div class="drawer__body">
-      <p class="drawer__empty" data-cart-empty>
-        Nothing here yet. Add a mix and its size, and it will collect here so you
-        can send everything in one message.
-      </p>
+      <div class="drawer__empty" data-cart-empty>
+        <p>Nothing here yet. Tap a size on any mix and it collects here, so you can
+        send everything in one message.</p>
+        <p><a href="${o.base}products.html">See all products</a> ·
+           <a href="${o.base}index.html#enquiry">Bulk or custom order</a></p>
+      </div>
       <ul class="cart-list" data-cart-list></ul>
     </div>
-
     <footer class="drawer__foot" data-cart-foot hidden>
       <div class="cart-total" data-cart-total></div>
       <a class="btn btn--wa" data-cart-send href="${WA_GENERAL}">
-        ${icon('brand-whatsapp')}
-        Send this order on WhatsApp
+        ${icon('brand-whatsapp')} Send this order on WhatsApp
       </a>
-      <p class="drawer__note">
-        This opens WhatsApp with your list already written out. Nothing is
-        charged here — we reply with the price and delivery.
-      </p>
+      <p class="drawer__note">Opens WhatsApp with your list already written out.
+      Nothing is charged here — we reply with the price and delivery.</p>
     </footer>
   </div>
 </div>
 
+<div class="order-bar" data-order-bar hidden>
+  <div class="wrap order-bar__inner">
+    <button type="button" class="order-bar__summary" data-cart-open>
+      ${icon('shopping-bag')}
+      <span data-order-bar-text>0 packets</span>
+      <span class="order-bar__hint">Price on WhatsApp</span>
+      <span class="order-bar__edit">Edit</span>
+    </button>
+    <a class="btn btn--wa" data-cart-send href="${WA_GENERAL}">
+      ${icon('brand-whatsapp')} Send on WhatsApp
+    </a>
+  </div>
+</div>
+
 <div class="wa-dock" data-wa-dock>
-  <button type="button" class="wa-dock__min" data-wa-toggle aria-label="Collapse the WhatsApp button">
-    ${icon('minus')}
-  </button>
+  <button type="button" class="wa-dock__min" data-wa-toggle aria-label="Collapse the WhatsApp button">${icon('minus')}</button>
   <a class="wa-dock__btn" href="${WA_GENERAL}" aria-label="Order on WhatsApp">
-    ${icon('brand-whatsapp')}
-    <span class="wa-dock__label">Order on WhatsApp</span>
+    ${icon('brand-whatsapp')}<span class="wa-dock__label">Order on WhatsApp</span>
   </a>
 </div>
 `;
@@ -197,11 +219,10 @@ function footer(o) {
   <div class="wrap">
     <div class="footer__grid">
       <div>
+        <img class="footer__mark" src="${o.base}assets/brand/logo-light.png" alt="" aria-hidden="true" width="461" height="258">
         <h3>Adisil Organic Food</h3>
-        <p style="color:var(--ink-soft)">
-          Traditional Tamil health mixes, kanji mixes, masalas, podis and thokku.
-          Freshly packed, no preservatives.
-        </p>
+        <p>Traditional Tamil health mixes, kanji mixes, masalas, podis and thokku.
+        Freshly packed, no preservatives.</p>
       </div>
       <div>
         <h3>What we make</h3>
@@ -214,8 +235,8 @@ function footer(o) {
         <h3>Order &amp; enquiries</h3>
         <ul>
           <li><a href="${WA_GENERAL}">WhatsApp ${esc(B.whatsappDisplay)}</a></li>
-          <li><a href="${o.base}index.html#order">How ordering works</a></li>
-          <li><a href="${o.base}index.html#why">Storage &amp; shelf life</a></li>
+          <li><a href="${o.base}index.html#enquiry">Bulk, custom &amp; feedback</a></li>
+          <li><a href="${o.base}index.html#faq">Storage &amp; shelf life</a></li>
         </ul>
       </div>
       <div>
@@ -257,88 +278,288 @@ function stars(n) {
   return out + '</span>';
 }
 
-function productCard(p, o) {
-  const [w, h] = dim(p.slug);
-  const count = p.ingredientCount
-    ? `<span class="card__count">${p.ingredientCount} ingredients</span>` : '';
+/* One quick-add component. Emitted by productCard() only, so there is exactly
+   one implementation and one delegated handler in site.js. */
+function quickAdd(p) {
+  const btns = D.weights.map(g =>
+    `<button type="button" class="qa" data-qa-add data-grams="${g}"
+              aria-label="Add ${esc(p.name)}, ${g} grams">${g}<span>g</span></button>`
+  ).join('\n        ');
   return `
-  <article class="card" style="--pc:${p.colour}" data-category="${esc(p.category)}">
-    <div class="card__media">
-      <picture>
-        <source srcset="${o.base}assets/labels/${p.slug}.webp" type="image/webp">
-        <img src="${o.base}assets/labels/${p.slug}.jpg" width="${w}" height="${h}"
-             loading="lazy" decoding="async" alt="">
-      </picture>
-    </div>
+      <div class="quickadd" data-buy data-slug="${esc(p.slug)}" data-name="${esc(p.name)}">
+        <span class="quickadd__label kicker">Add a pack</span>
+        <div class="quickadd__row" role="group" aria-label="Pack sizes for ${esc(p.name)}">
+        ${btns}
+        </div>
+      </div>`;
+}
+
+function productCard(p, o) {
+  const dish = `assets/art/dish-${p.slug}.jpg`;
+  const media = exists(dish)
+    ? pic(dish, '', { base: o.base, cls: 'card__dish' })
+    : pic(`assets/labels/${p.slug}.jpg`, '', { base: o.base });
+  const count = p.ingredientCount
+    ? `<span class="card__count">${p.ingredientCount} ingredients, all named</span>` : '';
+  const nuts = (p.allergens || []).length
+    ? `<span class="card__nuts">Contains ${esc(p.allergens.join(', ').toLowerCase())}</span>` : '';
+  return `
+  <article class="card" style="--pc:${p.colour}" data-category="${esc(p.category)}" data-card="${esc(p.slug)}">
+    <div class="card__media">${media}</div>
     <div class="card__body">
       <span class="kicker card__cat">${esc(p.category)}</span>
       <p class="card__tamil tamil">${esc(p.nameTamil)}</p>
       <h3><a href="${o.base}product/${p.slug}.html">${esc(p.name)}</a></h3>
       ${count}
+      ${nuts}
+      <p class="card__state" data-card-state hidden></p>
       <p class="card__price">${esc(priceLabel(p, D.weights[0]))}<span> · ${D.weights[0]}g</span></p>
-      <span class="card__more">View product ${icon('chevron-right')}</span>
     </div>
+${quickAdd(p)}
   </article>`;
 }
 
-function buyBox(p) {
-  const weights = D.weights.map((g, i) => `
-        <button type="button" class="weight" data-grams="${g}" aria-pressed="${i === 0}">
-          <b>${g} g</b>
-          <span>${esc(priceLabel(p, g))}</span>
-        </button>`).join('');
-
-  return `
-  <div class="buy" data-buy data-slug="${esc(p.slug)}" data-name="${esc(p.name)}">
-    <span class="kicker">Choose a size</span>
-    <div class="weights" role="group" aria-label="Pack size for ${esc(p.name)}">${weights}
-    </div>
-    <div class="buy__actions">
-      <button type="button" class="btn btn--product" data-add-to-cart>
-        ${icon('plus')} Add to order
-      </button>
-      <a class="btn btn--ghost" data-buy-now href="${wa(
-          "Hello Adisil! I'd like to know more about:\n" + p.name + " — " + D.weights[0] + "g")}">
-        ${icon('brand-whatsapp')} Ask about this one
-      </a>
-    </div>
-    <p class="buy__note" data-buy-note hidden></p>
-    ${p.perfectFor ? `<p class="buy__note">Good for: ${esc(p.perfectFor.join(' · '))}</p>` : ''}
-  </div>`;
-}
-
-function reviewsFor(slug) {
-  return reviews
-    .filter(t => (slug ? t.product === slug : true))
-    .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
-}
-
-function testimonialSection(list, o, opts) {
-  if (!list.length) return '';           // empty list -> section does not exist
-  opts = opts || {};
-  const cards = list.map(t => {
-    const who = [esc(t.name), t.place ? esc(t.place) : ''].filter(Boolean).join(' · ');
-    const prod = t.product && products.find(p => p.slug === t.product);
+/* The seven ingredient photos, cut from the pack and laid out natively so
+   nothing sits in a white box on a dark ground. */
+function ingredientDiscs(o, p) {
+  if (!p || !p.ingredientIcons || p.ingredientIcons.length !== p.ingredients.length) return '';
+  const index = JSON.parse(rd('assets', 'ingredients', 'index.json'));
+  const byslug = {};
+  index.forEach(i => { byslug[i.slug] = i.label; });
+  const items = p.ingredientIcons.map(slug => {
+    const src = `assets/ingredients/${slug}.png`;
+    if (!exists(src)) return '';
     return `
-      <figure class="quote"${prod ? ` style="--pc:${prod.colour}"` : ''} data-reveal>
-        ${stars(t.rating)}
-        <blockquote>${esc(t.text)}</blockquote>
-        <figcaption>
-          ${who}
-          ${prod && !opts.hideProduct ? `<span class="quote__prod">on ${esc(prod.name)}</span>` : ''}
-        </figcaption>
+        <li class="ingr__item">
+          ${pic(src, '', { base: o.base })}
+          <span>${esc(byslug[slug] || slug)}</span>
+        </li>`;
+  }).join('');
+  if (!items) return '';
+  return `
+      <figure class="ingr" aria-label="The ${p.ingredientIcons.length} ingredients printed on the ${esc(p.name)} pack">
+        <ul class="ingr__row" role="list">${items}
+        </ul>
+        <figcaption>Every ingredient printed on the ${esc(p.name)} pack — all
+        ${p.ingredientIcons.length} of them, in the order they appear on the label.</figcaption>
       </figure>`;
+}
+
+function enquirySection(o, product) {
+  const tiles = (D.enquiries || []).map(e => {
+    let text = e.text;
+    if (e.id === 'question' && product) text = text.replace('Product: ', 'Product: ' + product.name);
+    return `
+      <a class="tile" href="${wa(text)}">
+        ${icon(e.icon, 'tile__icon')}
+        <span class="tile__body">
+          <b>${esc(e.label)}</b>
+          <span>${esc(e.desc)}</span>
+        </span>
+        ${icon('chevron-right', 'tile__go')}
+      </a>`;
+  }).join('');
+  if (!tiles) return '';
+  return `
+  <section class="enquiry" id="enquiry">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="kicker">Ask us directly</p>
+        <h2>Bulk orders, custom blends, and anything else.</h2>
+        <p class="enquiry__lede">There is no form. Pick what you need and it opens
+        WhatsApp with the first line already written, so you are not starting from a
+        blank screen. We are two people — you get a real reply, usually the same day.</p>
+      </header>
+      <div class="tiles">${tiles}
+      </div>
+      <p class="enquiry__foot">We reply from the same number the order goes to:
+      ${esc(B.whatsappDisplay)} · FSSAI ${esc(B.fssai)}</p>
+    </div>
+  </section>`;
+}
+
+/* Real reviews if there are any. Otherwise a clearly-labelled sample layout,
+   which carries no name, no rating and no date — because inventing those for a
+   food business is both dishonest and, in India, regulated. */
+function reviewsSection(o) {
+  if (reviews.length) {
+    const cards = reviews.map(t => {
+      const who = [esc(t.name), t.place ? esc(t.place) : ''].filter(Boolean).join(' · ');
+      const prod = t.product && products.find(p => p.slug === t.product);
+      return `
+        <figure class="quote"${prod ? ` style="--pc:${prod.colour}"` : ''}>
+          ${stars(t.rating)}
+          <blockquote>${esc(t.text)}</blockquote>
+          <figcaption>${who}${prod ? `<span class="quote__prod">on ${esc(prod.name)}</span>` : ''}</figcaption>
+        </figure>`;
+    }).join('');
+    return `
+  <section class="reviews" id="reviews">
+    <div class="wrap">
+      <header class="section-head"><p class="kicker">What people say</p>
+      <h2>From the people cooking it</h2></header>
+      <div class="quotes">${cards}
+      </div>
+    </div>
+  </section>`;
+  }
+
+  if (!samplesOn) return '';
+
+  const card = t => `
+        <li class="sample-card" data-placeholder>
+          <span class="sample-card__tag">Sample — not a customer review</span>
+          <span class="sample-card__body">${esc(t)}</span>
+        </li>`;
+  const once = D.sampleReviews.map(card).join('');
+  return `
+  <section class="reviews reviews--sample" id="reviews">
+    <div class="wrap">
+      <header class="section-head section-head--row">
+        <div>
+          <p class="kicker">Sample layout</p>
+          <h2>No customer reviews yet.</h2>
+          <p>This is a placeholder so we can see how reviews will sit on the page.
+          Nothing here was written by a customer. When people send us feedback on
+          WhatsApp and say we may publish it, their words replace this — with their
+          name, their town and the date.</p>
+        </div>
+        <button type="button" class="btn btn--ghost" data-marquee-toggle aria-pressed="false">
+          ${icon('minus')}<span data-marquee-label>Pause</span>
+        </button>
+      </header>
+    </div>
+    <div class="marquee" data-marquee>
+      <ul class="marquee__track" role="list">${once}</ul>
+      <ul class="marquee__track" role="list" aria-hidden="true" inert>${once}</ul>
+    </div>
+    <div class="wrap">
+      <p class="reviews__cta">
+        <a href="${wa((D.enquiries.find(e => e.id === 'feedback') || {}).text || 'Hello Adisil!')}">
+          Ordered from us? Tell us how it went ${icon('chevron-right')}</a>
+      </p>
+    </div>
+  </section>`;
+}
+
+function faqSection(o) {
+  const items = (D.faq || []).map((f, i) => `
+        <details class="faq__item"${i === 0 ? ' open' : ''}>
+          <summary>${esc(f.q)}${icon('chevron-down', 'faq__chev')}</summary>
+          <div class="faq__a"><p>${esc(f.a)}</p></div>
+        </details>`).join('');
+  if (!items) return '';
+  return `
+  <section class="faq" id="faq">
+    <div class="wrap faq__grid">
+      <div class="faq__side">
+        <p class="kicker">Before you ask</p>
+        <h2>The things people message us about.</h2>
+        <figure class="faq__art">
+          ${pic('assets/art/hero-family.jpg',
+                'Illustration from the Adisil Health Mix label: a mother feeding her son a bowl of health mix at a wooden table.',
+                { base: o.base })}
+          <figcaption>From our Health Mix label</figcaption>
+        </figure>
+      </div>
+      <div class="faq__list">${items}
+      </div>
+    </div>
+  </section>`;
+}
+
+function howToOrder(o) {
+  return `
+  <section class="howto">
+    <div class="wrap">
+      <div class="howto__frame">
+        <p class="kicker">There is no checkout — here is how it works</p>
+        <ol class="howto__steps">
+          <li><b>01</b><span>Tap the sizes you want — 100g, 250g or 500g.</span></li>
+          <li><b>02</b><span>Your list builds itself at the bottom of the page.</span></li>
+          <li><b>03</b><span>Send it on WhatsApp. We reply with the price and arrange delivery.</span></li>
+        </ol>
+        <p class="howto__foot">${esc(B.whatsappDisplay)} · FSSAI ${esc(B.fssai)} ·
+        Prices are on WhatsApp while we finish the price list.</p>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* The fold. Dark ground, the food first, and the category said plainly. */
+function heroSection(o) {
+  const rangeItems = products.map(p => {
+    const dish = `assets/art/dish-${p.slug}.jpg`;
+    const src = exists(dish) ? dish : `assets/labels/${p.slug}.jpg`;
+    return `
+          <li><a href="product/${p.slug}.html" style="--pc:${p.colour}"
+                 aria-label="${esc(p.name)}">
+            ${pic(src, '', { base: '' })}
+          </a></li>`;
   }).join('');
 
   return `
-  <section class="reviews" id="reviews">
-    <div class="wrap">
-      <header class="section-head">
-        <p class="kicker">${esc(opts.kicker || 'What people say')}</p>
-        <h2>${esc(opts.heading || 'From the people cooking it')}</h2>
-      </header>
-      <div class="quotes">${cards}
+  <section class="hero">
+    <div class="hero__glow" aria-hidden="true"></div>
+    <div class="wrap hero__grid">
+
+      <div class="hero__copy">
+        <p class="hero__mark">
+          <span class="tamil">${esc(B.nameTamil)}</span>
+          <span class="hero__rule" aria-hidden="true"></span>
+          <span>Organic Food</span>
+        </p>
+
+        <h1>Health mix, kanji and dosai maavu<em>ground in our kitchen, sent to yours.</em></h1>
+
+        <p class="hero__sub">Two of us, one kitchen in Tamil Nadu. Traditional mixes
+        roasted and stone-ground in small batches, packed at 100g, 250g or 500g,
+        and ordered straight on WhatsApp.</p>
+
+        <div class="hero__cta">
+          <a class="btn btn--wa" href="${WA_GENERAL}">${icon('brand-whatsapp')} Order on WhatsApp</a>
+          <a class="btn btn--ghost-dark" href="products.html">See all ${products.length} mixes ${icon('arrow-right')}</a>
+        </div>
+
+        <p class="hero__enq"><a href="#enquiry">Bulk order, custom blend, or sending it
+        abroad? Message us.</a></p>
+
+        <div class="hero__range">
+          <ul role="list">${rangeItems}
+          </ul>
+          <a class="hero__range-all" href="products.html">All ${products.length}, made in the same kitchen ${icon('chevron-right')}</a>
+        </div>
+
+        <p class="hero__licence">FSSAI ${esc(B.fssai)} · Nothing added to make it keep
+        longer · 100g / 250g / 500g</p>
       </div>
+
+      <div class="hero__table">
+        <figure class="plate plate--kanji">
+          ${pic('assets/art/dish-karuppu-kavuni-kanji.jpg',
+                'A clay bowl of black kavuni rice kanji with a sprig of mint.',
+                { base: '', eager: true })}
+          <figcaption class="plate__tag">
+            <b>Kavuni Kanji</b><span class="tamil">கருப்பு கவுனி கஞ்சி</span>
+          </figcaption>
+        </figure>
+        <figure class="plate plate--dosai">
+          ${pic('assets/art/dish-dosai-mix.jpg',
+                'A golden multi-millet dosai on a banana leaf with coconut chutney and sambar.',
+                { base: '', eager: true })}
+        </figure>
+        <figure class="plate plate--samba">
+          ${pic('assets/art/dish-mappillai-samba-kanji.jpg',
+                'A blue and white porcelain bowl of mappillai samba kanji with scoops of red rice, black urad and green moong.',
+                { base: '' })}
+        </figure>
+        <figure class="plate plate--packet">
+          ${pic('assets/labels/health-mix.jpg',
+                'The Adisil Health Mix packet, showing the full list of twenty ingredients.',
+                { base: '', eager: true })}
+        </figure>
+      </div>
+
     </div>
   </section>`;
 }
@@ -348,157 +569,76 @@ function testimonialSection(list, o, opts) {
    ========================================================================== */
 
 function homePage() {
-  const o = { base: '', here: 'home' };
-  const cards = products.map(p => productCard(p, o)).join('');
-
+  const o = { base: '', here: 'home', navOnDark: true };
   return head({
-    base: '', url: 'index.html',
-    title: 'Adisil Organic Foods — Traditional Tamil health mixes, masalas & podis',
-    description: 'Homemade Tamil health mixes, kanji mixes, masalas and podis. Made in small batches with nothing added to make them keep longer. FSSAI licensed. Order on WhatsApp.',
+    base: '', url: 'index.html', bodyClass: 'page-home', themeColour: '#063314',
+    title: 'Adisil Organic Foods — Tamil health mix, kanji mixes, masalas & podis',
+    description: 'Traditional Tamil health mix, kanji mixes and dosai maavu, roasted and stone-ground by hand in small batches. No preservatives. FSSAI licensed. Order on WhatsApp.',
     image: 'assets/labels/health-mix.jpg',
     jsonld: {
       '@context': 'https://schema.org', '@type': 'Organization',
-      name: 'Adisil Organic Foods', description: 'Traditional Tamil homemade health mixes, kanji mixes, masalas and podis.',
+      name: 'Adisil Organic Foods',
+      description: 'Traditional Tamil homemade health mixes, kanji mixes, masalas and podis.',
       sameAs: [B.instagram, B.facebook],
       contactPoint: { '@type': 'ContactPoint', contactType: 'sales', telephone: '+' + B.whatsapp }
     }
   }) + nav(o) + `
 <main id="main">
-
-  <section class="hero">
-    <div class="wrap">
-      <div class="hero__frame">
-        <p class="hero__kicker kicker">${icon('wheat')} Traditional • Nutritious</p>
-        <h1 data-reveal>Everything in the packet <em>is printed on the packet.</em></h1>
-        <p class="hero__sub" data-reveal>
-          Adisil is two people making traditional Tamil health mixes, kanji mixes,
-          masalas and podis the way they were made at home — roasted and ground in
-          small batches, with nothing added to make them keep longer.
-        </p>
-        <div class="hero__cta" data-reveal>
-          <a class="btn btn--wa" href="${WA_GENERAL}">${icon('brand-whatsapp')} Order on WhatsApp</a>
-          <a class="btn btn--ghost" href="products.html">See what we make ${icon('arrow-right')}</a>
-        </div>
-        <figure class="hero__art" data-reveal>
-          <picture>
-            <source srcset="assets/art/hero-family.webp" type="image/webp">
-            <img src="assets/art/hero-family.jpg" width="1400" height="500"
-                 alt="Illustration of a mother feeding her son a bowl of health mix at a wooden table, with palm trees and a thatched village house behind them.">
-          </picture>
-        </figure>
-        <p class="hero__caption">From the Adisil Health Mix label</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="stakes" id="why">
-    <div class="wrap stakes__grid">
-      <div>
-        <p class="kicker">Why the shelf life is short</p>
-        <h2 data-reveal>A three-month shelf life is <em>the point</em>.</h2>
-        <p class="stakes__lede" data-reveal>
-          Our mixes keep for three months from the day you open the packet. That is
-          not a corner we cut — it is what happens when nothing goes in to make food
-          keep longer. The list printed on the back of the pack is the entire recipe,
-          and there is nothing on it you would not have in your own kitchen.
-        </p>
-      </div>
-      <ul class="facts">
-        <li class="fact" data-reveal><span class="fact__num">20</span>
-          <span class="fact__body"><b>Ingredients in the Health Mix</b>
-          <span>Every one of them named on the pack — ragi, kambu, kollu, javarisi, and sixteen more.</span></span></li>
-        <li class="fact" data-reveal><span class="fact__num">03</span>
-          <span class="fact__body"><b>Months, once the packet is opened</b>
-          <span>Short on purpose. Store it cool and dry, and keep the pack closed after every use.</span></span></li>
-        <li class="fact" data-reveal><span class="fact__num">00</span>
-          <span class="fact__body"><b>Preservatives, colours or fillers</b>
-          <span>Nothing is added to bulk the mix out, hold the colour, or stretch the date.</span></span></li>
-      </ul>
-    </div>
-  </section>
+${heroSection(o)}
+${howToOrder(o)}
 
   <section class="catalogue" id="catalogue">
     <div class="wrap">
       <header class="section-head section-head--row">
         <div>
           <p class="kicker">What we make</p>
-          <h2>${products.length} mixes, and the whole list for each one.</h2>
-          <p>Every product page shows its complete ingredient list, in the order it
-          is printed on the pack. Nothing is summarised, nothing hidden behind a
-          "natural blend".</p>
+          <h2>${products.length} mixes. Tap a size to start a list.</h2>
+          <p>Every product page shows its complete ingredient list, in the order it is
+          printed on the pack. Nothing summarised, nothing behind a "natural blend".</p>
         </div>
         <a class="btn btn--ghost" href="products.html">All products ${icon('arrow-right')}</a>
       </header>
-      <div class="cards">${cards}
+      <div class="cards">${products.map(p => productCard(p, o)).join('')}
       </div>
     </div>
   </section>
 
-${testimonialSection(reviewsFor(null), o, {})}
-
-  <section class="order" id="order">
-    <div class="wrap">
-      <header class="section-head">
-        <p class="kicker">How to order</p>
-        <h2>Three steps, one conversation.</h2>
-        <p>There is no checkout. You build a list, send it on WhatsApp, and we
-        confirm. For a kitchen this size, that is genuinely the fastest way.</p>
-      </header>
-      <ol class="steps">
-        <li class="step" data-reveal><b>Add what you want</b>
-          <p>Pick the mixes and sizes. They collect in one list — you do not have to
-          message us separately for each one.</p></li>
-        <li class="step" data-reveal><b>Send the list on WhatsApp</b>
-          <p>One tap opens WhatsApp with everything written out. Edit it if you want
-          to change something.</p></li>
-        <li class="step" data-reveal><b>We confirm and send</b>
-          <p>We reply with the price, the packing and how long delivery takes to your
-          area.</p></li>
-      </ol>
-    </div>
-  </section>
+${reviewsSection(o)}
+${enquirySection(o)}
 
   <section class="proof">
-    <div class="wrap proof__grid">
-      <div class="proof__lead">
+    <div class="wrap">
+      <header class="section-head">
         <p class="kicker">Why you can trust a kitchen this small</p>
-        <h2 data-reveal>Small kitchen. Real licence.</h2>
-        <p class="proof__lede" data-reveal>
-          Every ingredient is shown and named on the pack — not grouped into a
-          "blend", not abbreviated. This is the row printed on the Karupu Ulundhu
-          Kanji packet.
-        </p>
-        <figure class="proof__strip" data-reveal>
-          <picture>
-            <source srcset="assets/art/ingredients-seven.webp" type="image/webp">
-            <img src="assets/art/ingredients-seven.jpg" width="1200" height="216" loading="lazy" decoding="async"
-                 alt="The seven ingredients printed on the Karupu Ulundhu Kanji Mix pack, each photographed in a bowl and labelled: black urad dal, raw rice, dry ginger, cardamom, black kavuni rice, cashew and almond.">
-          </picture>
-        </figure>
+        <h2>Small kitchen. Real licence.</h2>
+      </header>
+      <div class="proof__grid">
+        <ul class="creds">
+          <li class="cred">${icon('certificate')}
+            <span><b>FSSAI licensed</b><span>Licence no. <code>${esc(B.fssai)}</code> — a
+            registered food business. You can look the number up on the FSSAI register.</span></span></li>
+          <li class="cred">${icon('ban')}
+            <span><b>Nothing added</b><span>No preservatives, no added colour, no artificial
+            flavour. Every ingredient is named on the pack and on this site.</span></span></li>
+          <li class="cred">${icon('chef-hat')}
+            <span><b>Made in small batches</b><span>By two people, to traditional Tamil
+            recipes — roasted and ground in quantities we can actually watch over.</span></span></li>
+          <li class="cred">${icon('clock')}
+            <span><b>Best before three months</b><span>From the date the packet is opened.
+            Short on purpose: nothing goes in to make it keep longer.</span></span></li>
+        </ul>
+${ingredientDiscs(o, products.find(p => p.slug === 'karupu-ulundhu-kanji'))}
       </div>
-      <ul class="creds">
-        <li class="cred" data-reveal>${icon('certificate')}
-          <span><b>FSSAI licensed</b><span>Licence no. <code>${esc(B.fssai)}</code> — a registered
-          food business. You can look the number up on the FSSAI register.</span></span></li>
-        <li class="cred" data-reveal>${icon('ban')}
-          <span><b>Nothing added</b><span>No preservatives, no added colour, no artificial flavour.
-          Every ingredient is named on the pack and on this site.</span></span></li>
-        <li class="cred" data-reveal>${icon('chef-hat')}
-          <span><b>Made in small batches</b><span>By two people, to traditional Tamil recipes —
-          roasted and ground in quantities we can actually watch over.</span></span></li>
-        <li class="cred" data-reveal>${icon('clock')}
-          <span><b>Best before three months</b><span>From the date the packet is opened. Store cool
-          and dry, and keep the pack tightly closed.</span></span></li>
-      </ul>
     </div>
   </section>
+
+${faqSection(o)}
 
   <section class="close">
     <div class="wrap">
-      <h2 data-reveal>Tell us what you'd like.</h2>
-      <p data-reveal>Build your list, send it on WhatsApp, and we will confirm the
-      price and the packing.</p>
-      <a class="btn btn--wa" href="${WA_GENERAL}" data-reveal>${icon('brand-whatsapp')} Start a message on WhatsApp</a>
+      <h2>Tell us what you'd like.</h2>
+      <p>Build your list, send it on WhatsApp, and we will confirm the price and the packing.</p>
+      <a class="btn btn--wa" href="${WA_GENERAL}">${icon('brand-whatsapp')} Start a message on WhatsApp</a>
       <p class="close__num">${esc(B.whatsappDisplay)}</p>
     </div>
   </section>
@@ -525,19 +665,22 @@ function productsPage() {
       </header>
       <div class="more__grid">
         ${groups.map(g => `
-        <article class="more__card" style="--cc:${g.colour}" data-reveal>
-          ${icon(g.icon)}
-          <h3>${esc(g.category)}</h3>
+        <article class="more__card" style="--cc:${g.colour}">
+          ${icon(g.icon)}<h3>${esc(g.category)}</h3>
           <ul>${g.items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>
         </article>`).join('')}
       </div>
     </div>
   </section>` : '';
 
+  const presets = D.weights.slice(0, 2).map(g =>
+    `<button type="button" class="chip chip--preset" data-preset="${g}">Add all ${products.length} · ${g}g each</button>`
+  ).join('\n        ');
+
   return head({
-    base: '', url: 'products.html',
+    base: '', url: 'products.html', themeColour: '#F7E9CF',
     title: 'All products — Adisil Organic Foods',
-    description: `Every Adisil mix, with its complete ingredient list: ${products.map(p => p.name).join(', ')}. Made in small batches, no preservatives. Order on WhatsApp.`,
+    description: `Every Adisil mix with its complete ingredient list: ${products.map(p => p.name).join(', ')}. Small batches, no preservatives. Order on WhatsApp.`,
     image: 'assets/labels/health-mix.jpg'
   }) + nav(o) + `
 <main id="main">
@@ -547,13 +690,15 @@ function productsPage() {
         <a href="index.html">Home</a> ${icon('chevron-right')} <span aria-current="page">All products</span>
       </nav>
       <h1>Everything we make</h1>
-      <p class="page-head__lede">
-        ${products.length} products, each with its full ingredient list printed on
-        this site exactly as it appears on the pack. Every one comes in
-        ${D.weights.join('g, ')}g.
-      </p>
+      <p class="page-head__lede">${products.length} products, each with its full
+      ingredient list printed here exactly as it appears on the pack. Every one comes
+      in ${D.weights.join('g, ')}g. Tap a size to add it — you can pick several and
+      send one message.</p>
       <div class="chips" role="group" aria-label="Filter by category">
         ${chips}
+      </div>
+      <div class="chips chips--presets">
+        ${presets}
       </div>
     </div>
   </section>
@@ -566,27 +711,23 @@ function productsPage() {
     </div>
   </section>
 ${soon}
+${enquirySection(o)}
 </main>
 ` + chrome(o) + footer(o);
 }
 
-function productPage(p, i) {
+function productPage(p) {
   const o = { base: '../', here: 'products' };
-  const [w, h] = dim(p.slug);
 
   const ings = p.ingredients.map((n, k) =>
     `<li><i>${pad(k + 1)}</i><span>${esc(n)}</span></li>`).join('\n          ');
-
   const bens = (p.benefits || []).map(b =>
     `<li class="benefit">${icon(b[0])}<span>${esc(b[1])}</span></li>`).join('\n          ');
-
   const prep = (p.prepare || []).map(s => `<li><span>${esc(s)}</span></li>`).join('\n          ');
 
-  const mine = reviewsFor(p.slug);
+  const mine = reviews.filter(t => t.product === p.slug);
   const rated = mine.filter(t => typeof t.rating === 'number');
 
-  /* Product schema. aggregateRating and review are included ONLY when real
-     reviews exist — never fabricated to fill the shape. */
   const jsonld = {
     '@context': 'https://schema.org', '@type': 'Product',
     name: p.name, description: p.blurb,
@@ -594,7 +735,8 @@ function productPage(p, i) {
     brand: { '@type': 'Brand', name: 'Adisil Organic Foods' },
     category: p.category
   };
-  if (rated.length) {
+  /* Rating markup only ever appears when real, named, rated reviews exist. */
+  if (rated.length && !samplesOn) {
     jsonld.aggregateRating = {
       '@type': 'AggregateRating',
       ratingValue: (rated.reduce((s, t) => s + t.rating, 0) / rated.length).toFixed(1),
@@ -609,9 +751,33 @@ function productPage(p, i) {
   }
 
   const others = products.filter(x => x.slug !== p.slug).slice(0, 3);
+  const weights = D.weights.map((g, i) => `
+        <button type="button" class="weight" data-grams="${g}" aria-pressed="${i === 0}">
+          <b>${g} g</b><span>${esc(priceLabel(p, g))}</span>
+        </button>`).join('');
+
+  const allerg = (p.allergens || []).length
+    ? `<div><dt>Allergens</dt><dd><b>Contains ${esc(p.allergens.join(', ').toLowerCase())}.</b>
+       Made in a kitchen that also handles nuts.</dd></div>`
+    : `<div><dt>Allergens</dt><dd>None of the listed ingredients is a declared allergen.
+       Made in a kitchen that also handles nuts.</dd></div>`;
+
+  const myQuotes = mine.length ? `
+  <section class="reviews">
+    <div class="wrap">
+      <header class="section-head"><p class="kicker">What people say</p>
+      <h2>On ${esc(p.name)}</h2></header>
+      <div class="quotes">${mine.map(t => `
+        <figure class="quote" style="--pc:${p.colour}">
+          ${stars(t.rating)}<blockquote>${esc(t.text)}</blockquote>
+          <figcaption>${esc(t.name)}${t.place ? ' · ' + esc(t.place) : ''}</figcaption>
+        </figure>`).join('')}
+      </div>
+    </div>
+  </section>` : '';
 
   return head({
-    base: '../', url: `product/${p.slug}.html`,
+    base: '../', url: `product/${p.slug}.html`, themeColour: p.colour,
     title: `${p.name} — Adisil Organic Foods`,
     ogTitle: `${p.name} · Adisil Organic Foods`,
     description: `${p.blurb} ${p.ingredientCount ? p.ingredientCount + ' named ingredients. ' : ''}Available in ${D.weights.join('g, ')}g. No preservatives. Order on WhatsApp.`.trim(),
@@ -620,31 +786,43 @@ function productPage(p, i) {
   }) + nav(o) + `
 <main id="main">
   <article class="detail">
-    <div class="wrap detail__grid">
+    <div class="detail__band">
+      <div class="wrap detail__grid">
+        <figure class="detail__plate">
+          ${pic(`assets/labels/${p.slug}.jpg`,
+                `The printed label for Adisil ${p.name}, showing the full ingredient list and preparation instructions.`,
+                { base: '../', eager: true })}
+        </figure>
+        <div class="detail__intro">
+          <nav class="crumbs crumbs--dark" aria-label="Breadcrumb">
+            <a href="../index.html">Home</a> ${icon('chevron-right')}
+            <a href="../products.html">Products</a> ${icon('chevron-right')}
+            <span aria-current="page">${esc(p.name)}</span>
+          </nav>
+          <p class="kicker detail__cat">${esc(p.category)}</p>
+          <p class="detail__tamil tamil">${esc(p.nameTamil)}</p>
+          <h1>${esc(p.name)}</h1>
+          <p class="detail__tagline">${esc(p.tagline)}</p>
+          <p class="detail__blurb">${esc(p.blurb)}</p>
 
-      <figure class="detail__plate">
-        <picture>
-          <source srcset="../assets/labels/${p.slug}.webp" type="image/webp">
-          <img src="../assets/labels/${p.slug}.jpg" width="${w}" height="${h}" fetchpriority="high"
-               alt="The printed label for Adisil ${esc(p.name)}, showing the full ingredient list and preparation instructions.">
-        </picture>
-      </figure>
+          <div class="buy" data-buy data-slug="${esc(p.slug)}" data-name="${esc(p.name)}">
+            <span class="kicker">Choose a size</span>
+            <div class="weights" role="group" aria-label="Pack size for ${esc(p.name)}">${weights}
+            </div>
+            <div class="buy__actions">
+              <button type="button" class="btn btn--product" data-add-to-cart>${icon('plus')} Add to order</button>
+              <a class="btn btn--ghost-dark" data-buy-now href="${wa("Hello Adisil! I'd like to know more about:\n" + p.name + ' — ' + D.weights[0] + 'g')}">
+                ${icon('brand-whatsapp')} Ask about this one
+              </a>
+            </div>
+            <p class="buy__note" data-buy-note hidden></p>
+          </div>
+        </div>
+      </div>
+    </div>
 
-      <div class="detail__body">
-        <nav class="crumbs" aria-label="Breadcrumb">
-          <a href="../index.html">Home</a> ${icon('chevron-right')}
-          <a href="../products.html">Products</a> ${icon('chevron-right')}
-          <span aria-current="page">${esc(p.name)}</span>
-        </nav>
-
-        <p class="detail__index"><span class="kicker">${esc(p.category)}</span></p>
-        <p class="detail__tamil tamil">${esc(p.nameTamil)}</p>
-        <h1>${esc(p.name)}</h1>
-        <p class="detail__tagline">${esc(p.tagline)}</p>
-        <p class="detail__blurb">${esc(p.blurb)}</p>
-
-${buyBox(p)}
-
+    <div class="wrap detail__body">
+      <div class="detail__main">
         <div class="ingredients">
           <div class="ingredients__head">
             <span class="kicker">Ingredients</span>
@@ -655,29 +833,35 @@ ${buyBox(p)}
           </ol>
           <p class="ingredients__note">Printed on the pack in this order.</p>
         </div>
-
-        ${bens ? `<ul class="benefits" data-reveal-group>
+        ${bens ? `<ul class="benefits">
           ${bens}
         </ul>` : ''}
-
         ${prep ? `<div class="prepare">
           <span class="kicker">How to prepare</span>
           <ol>
           ${prep}
           </ol>
         </div>` : ''}
+      </div>
 
+      <aside class="detail__aside">
         <dl class="spec">
           <div><dt>Net weights</dt><dd>${D.weights.join('g · ')}g</dd></div>
+          ${allerg}
+          <div><dt>Veg</dt><dd>Vegetarian. ${p.veg ? 'Green mark.' : ''}</dd></div>
           <div><dt>Best before</dt><dd>${esc(B.shelfLife)}</dd></div>
           <div><dt>Storage</dt><dd>Cool, dry place. Use a clean, dry spoon and keep the pack tightly closed.</dd></div>
+          <div><dt>Batch &amp; date</dt><dd>Printed on your pack.</dd></div>
           <div><dt>FSSAI licence</dt><dd><code>${esc(B.fssai)}</code></dd></div>
+          <div><dt>Consumer care</dt><dd><a href="${WA_GENERAL}">${esc(B.whatsappDisplay)}</a></dd></div>
         </dl>
-      </div>
+      </aside>
     </div>
+${p.ingredientIcons ? `    <div class="wrap">${ingredientDiscs(o, p)}</div>` : ''}
   </article>
 
-${testimonialSection(mine, o, { kicker: 'What people say', heading: `On ${p.name}`, hideProduct: true })}
+${myQuotes}
+${enquirySection(o, p)}
 
   <section class="related">
     <div class="wrap">
@@ -707,12 +891,16 @@ const write = (rel, html) => {
 console.log('\nBuilding Adisil site…\n');
 write('index.html', homePage());
 write('products.html', productsPage());
-products.forEach((p, i) => write(`product/${p.slug}.html`, productPage(p, i)));
+products.forEach(p => write(`product/${p.slug}.html`, productPage(p)));
 
-console.log(`\n${products.length} products · ${reviews.length} testimonial(s)` +
-            (reviews.length ? '' : ' — testimonial sections are hidden until you add some'));
+console.log(`\n${products.length} products · ${reviews.length} real review(s)`);
+if (samplesOn) {
+  console.log('\n  ⚠  SAMPLE review layout is showing on the site.');
+  console.log('     Set  showSampleReviews: false  in assets/js/products.js before');
+  console.log('     you share the site publicly, or paste in a real review.');
+}
 if (!SITE) {
-  console.log('\nTip: set business.siteUrl in products.js once you have a domain, and');
-  console.log('     re-run this. It adds canonical + absolute social-preview URLs.');
+  console.log('\n  Tip: set business.siteUrl in products.js once you have a domain,');
+  console.log('       then re-run. It adds canonical + absolute social-preview URLs.');
 }
 console.log('\nDone.\n');

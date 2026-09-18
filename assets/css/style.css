@@ -28,6 +28,15 @@
   --rule:       #D9C4A0;
   --on-green:   #FDF7EC;
 
+  /* Section grounds. Every one is a colour already on a printed label — these
+     are the same five rails, promoted from 4px accents to whole sections. */
+  --hero-ground:   #063314;   /* Kavuni label rail — bottle green */
+  --hero-ground-2: #052810;   /* one step deeper, mid-stop of the hero ramp */
+  --oxblood:       #3E0100;   /* Health Mix rail */
+  --maroon:        #340000;   /* Dosai Mix rail */
+  --plum:          #450D31;   /* Ulundhu rail */
+  --navy:          #002D68;   /* Samba rail */
+
   /* The current product colour. Set per-section, and animated on scroll. */
   --pc:         #3E0100;
 
@@ -235,126 +244,6 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.22e
   .nav__inner { gap: var(--s3); }
   .nav .btn { margin-left: auto; }
 }
-
-/* ==========================================================================
-   5. HERO — poster fold
-   ========================================================================== */
-
-.hero { padding-block: var(--s9) var(--s8); position: relative; overflow: hidden; }
-
-.hero__frame {
-  border: 1px solid var(--rule);
-  border-radius: var(--r3);
-  padding: clamp(var(--s6), 5vw, var(--s10)) clamp(var(--s5), 4vw, var(--s9));
-  background:
-    radial-gradient(120% 90% at 50% 0%,
-      color-mix(in srgb, var(--surface) 70%, transparent) 0%,
-      transparent 72%);
-  position: relative;
-}
-/* The inner hairline, echoing the label's double frame */
-.hero__frame::after {
-  content: ""; position: absolute; inset: 7px;
-  border: 1px solid color-mix(in srgb, var(--rule) 55%, transparent);
-  border-radius: calc(var(--r3) - 4px);
-  pointer-events: none;
-}
-
-.hero__kicker {
-  display: flex; align-items: center; justify-content: center;
-  gap: var(--s3); margin-bottom: var(--s5);
-}
-.hero__kicker .icon { color: var(--gold); width: 1.1em; height: 1.1em; }
-
-.hero h1 {
-  font-size: var(--t-3xl);
-  text-align: center;
-  max-width: 17ch;
-  margin-inline: auto;
-  font-variation-settings: "SOFT" 40, "WONK" 1, "opsz" 120;
-}
-.hero h1 em {
-  font-style: normal;
-  color: var(--green);
-  display: block;
-}
-
-.hero__sub {
-  text-align: center;
-  max-width: 54ch; margin: var(--s5) auto 0;
-  font-size: var(--t-md);
-  color: var(--ink-soft);
-}
-
-.hero__cta {
-  display: flex; gap: var(--s4); justify-content: center;
-  margin-top: var(--s7); flex-wrap: wrap;
-}
-
-.hero__art {
-  margin-top: clamp(var(--s7), 6vw, var(--s9));
-  border-radius: var(--r2);
-  overflow: hidden;
-  /* the illustration's own cream matches --surface, so it blends into the frame */
-  mask-image: linear-gradient(to right,
-              transparent 0%, #000 9%, #000 91%, transparent 100%);
-}
-.hero__art img { width: 100%; }
-
-.hero__caption {
-  text-align: center; margin-top: var(--s4);
-  font-size: var(--t-xs); color: var(--ink-soft); font-style: italic;
-}
-
-/* ==========================================================================
-   6. STAKES — "a three month shelf life is the point"
-   ========================================================================== */
-
-.stakes { padding-block: var(--s10); }
-
-.stakes__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(var(--s6), 6vw, var(--s10));
-  align-items: start;
-}
-@media (max-width: 900px) { .stakes__grid { grid-template-columns: minmax(0, 1fr); } }
-
-.stakes h2 { font-size: var(--t-xl); max-width: 15ch; }
-.stakes h2 em { font-style: normal; color: var(--pc); }
-
-.stakes__lede {
-  margin-top: var(--s5);
-  font-size: var(--t-md);
-  max-width: var(--measure);
-  color: var(--ink-soft);
-}
-
-/* The number-led facts. Real figures only — nothing invented. */
-.facts { display: grid; gap: var(--s5); }
-
-.fact {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: var(--s5);
-  align-items: baseline;
-  padding: var(--s5) 0;
-  border-top: 1px solid var(--rule);
-}
-.fact:last-child { border-bottom: 1px solid var(--rule); }
-
-.fact__num {
-  font-family: Fraunces, serif;
-  font-size: var(--t-xl);
-  font-weight: 600;
-  font-variation-settings: "SOFT" 20, "WONK" 0;
-  color: var(--pc);
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  min-width: 3.2ch;
-}
-.fact__body b { display: block; font-size: var(--t-base); margin-bottom: var(--s1); }
-.fact__body span { color: var(--ink-soft); font-size: var(--t-sm); }
 
 /* ==========================================================================
    7. SPECIMEN ENTRIES — the catalogue itself
@@ -589,7 +478,7 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.22e
    10. PROOF
    ========================================================================== */
 
-.proof { padding-block: var(--s10); background: var(--green); color: var(--on-green); }
+.proof { padding-block: var(--s10); background: var(--hero-ground); color: var(--on-green); }
 .proof h2 { font-size: var(--t-xl); max-width: 18ch; }
 .proof .kicker { color: color-mix(in srgb, var(--on-green) 68%, transparent); }
 
@@ -599,24 +488,8 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.22e
 }
 @media (max-width: 900px) { .proof__grid { grid-template-columns: minmax(0, 1fr); } }
 
-.proof__lead { position: sticky; top: 104px; }
-@media (max-width: 900px) { .proof__lead { position: static; } }
 
-.proof__lede {
-  margin-top: var(--s5);
-  max-width: 42ch;
-  color: color-mix(in srgb, var(--on-green) 80%, transparent);
-  font-size: var(--t-base);
-}
 
-/* The label's own ingredient row, used as the proof beat's visual. */
-.proof__strip {
-  margin: var(--s7) 0 0;
-  border-radius: var(--r2);
-  overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--on-green) 22%, transparent);
-}
-.proof__strip img { width: 100%; }
 
 .creds { display: grid; gap: var(--s5); }
 .cred {
@@ -1082,3 +955,604 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.22e
    last line on short screens. */
 .footer { padding-bottom: calc(var(--s8) + 56px); }
 @media (min-width: 621px) { .footer { padding-bottom: var(--s8); } }
+
+/* ==========================================================================
+   20. HERO — "the laid table". Dark ground, the food first.
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  color: var(--paper);
+  padding-block: clamp(var(--s8), 7vw, var(--s10)) clamp(var(--s8), 7vw, var(--s10));
+  background:
+    /* paper grain, so the ramp is never a flat two-stop gradient */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E"),
+    linear-gradient(168deg, var(--hero-ground) 0%, var(--hero-ground-2) 46%, var(--oxblood) 100%);
+  overflow: hidden;
+}
+/* gold bloom behind the plates — what keeps a dark fold warm */
+.hero__glow {
+  position: absolute; inset: -14%;
+  background: radial-gradient(58% 50% at 62% 46%, rgba(208,124,10,.26), transparent 68%);
+  filter: blur(8px);
+  pointer-events: none;
+}
+/* handoff: without this the dark fold reads as a stray banner */
+.hero::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px;
+  background: linear-gradient(90deg, var(--gold), var(--oxblood));
+}
+
+.hero__grid {
+  position: relative; z-index: 1;
+  display: grid; gap: clamp(var(--s6), 4vw, var(--s8));
+  align-items: center;
+}
+@media (min-width: 1000px) {
+  .hero__grid { grid-template-columns: minmax(0, 42fr) minmax(0, 58fr); }
+}
+
+.hero__mark {
+  display: flex; align-items: center; gap: var(--s3);
+  margin-bottom: var(--s5);
+}
+.hero__mark .tamil { font-size: 1.25rem; color: var(--gold); }  /* 20px bold: large-text, 4.40:1 OK */
+.hero__mark > span:last-child {
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--paper) 70%, transparent);
+}
+.hero__rule { flex: 1; height: 1px; background: color-mix(in srgb, var(--gold) 60%, transparent); max-width: 120px; }
+
+.hero h1 {
+  font-size: clamp(2.1rem, 1.3rem + 3.4vw, 4.1rem);
+  line-height: 1.02;
+  max-width: 15ch;
+  font-variation-settings: "SOFT" 40, "WONK" 1, "opsz" 120;
+}
+.hero h1 em {
+  display: block; font-style: normal;
+  /* gold is legal here only at large sizes; the max() keeps it above 18.66px */
+  font-size: max(1.2rem, 0.52em);
+  color: var(--gold);
+  margin-top: 0.22em;
+}
+@media (max-width: 480px) { .hero h1 em { color: var(--paper); } }
+
+.hero__sub {
+  margin-top: var(--s5); max-width: 46ch;
+  font-size: var(--t-md);
+  color: color-mix(in srgb, var(--paper) 82%, transparent);
+}
+
+.hero__cta { display: flex; gap: var(--s4); flex-wrap: wrap; margin-top: var(--s6); }
+.btn--ghost-dark {
+  background: transparent; color: var(--paper);
+  border-color: color-mix(in srgb, var(--paper) 38%, transparent);
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn--ghost-dark:hover { border-color: var(--paper); transform: translateY(-2px); }
+}
+
+.hero__enq { margin-top: var(--s4); font-size: var(--t-sm); }
+.hero__enq a {
+  color: color-mix(in srgb, var(--paper) 72%, transparent);
+  text-decoration-color: var(--gold);
+}
+@media (hover: hover) and (pointer: fine) { .hero__enq a:hover { color: var(--paper); } }
+
+/* the range strip — five real dishes, colour-ringed by product */
+.hero__range {
+  display: flex; flex-direction: column; align-items: flex-start; gap: var(--s3);
+  margin-top: var(--s7);
+}
+.hero__range ul { display: flex; gap: var(--s3); }
+.hero__range ul a {
+  display: block; width: 44px; height: 44px;
+  border-radius: 50%; overflow: hidden;
+  box-shadow: 0 0 0 2px var(--pc), 0 0 0 3px color-mix(in srgb, var(--paper) 30%, transparent);
+  transition: transform 180ms var(--ease);
+}
+.hero__range ul img { width: 100%; height: 100%; object-fit: cover; }
+@media (min-width: 900px) { .hero__range ul a { width: 56px; height: 56px; } }
+@media (hover: hover) and (pointer: fine) { .hero__range ul a:hover { transform: translateY(-3px); } }
+@media (prefers-reduced-motion: reduce) { .hero__range ul a { transition: none; } .hero__range a:hover { transform: none; } }
+.hero__range-all {
+  font-size: var(--t-sm); text-decoration: none;
+  color: color-mix(in srgb, var(--paper) 65%, transparent);
+  display: inline-flex; align-items: center; gap: var(--s1);
+}
+.hero__range-all .icon { width: 1em; height: 1em; }
+
+.hero__licence {
+  margin-top: var(--s6); padding-top: var(--s4);
+  border-top: 1px solid color-mix(in srgb, var(--gold) 45%, transparent);
+  font-size: 0.78rem;
+  color: color-mix(in srgb, var(--paper) 60%, transparent);
+}
+
+/* --- the table: loose photographic prints, overlapping --- */
+.hero__table { position: relative; aspect-ratio: 5 / 4; }
+@media (min-width: 1000px) {
+  .hero__table { width: calc(100% + clamp(0px, 6vw, 80px)); overflow: visible; }
+}
+.plate {
+  position: absolute; margin: 0;
+  border-radius: 10px; overflow: hidden;
+  border: 4px solid var(--paper);
+  box-shadow: 0 22px 44px -12px rgba(0,0,0,.55), 0 2px 6px rgba(0,0,0,.3);
+}
+.plate img { width: 100%; height: 100%; object-fit: cover; }
+.plate--kanji  { left: 6%;  top: 4%;     width: 58%; rotate: -2.2deg; z-index: 3; aspect-ratio: 16/11; }
+.plate--dosai  { left: 0;   bottom: 2%;  width: 52%; rotate: 2.6deg;  z-index: 4; aspect-ratio: 16/9; }
+.plate--samba  { right: 2%; top: 22%;    width: 42%; rotate: 1.4deg;  z-index: 2; aspect-ratio: 16/11; }
+.plate--packet {
+  right: 4%; bottom: 6%; width: 33%; rotate: -3deg; z-index: 5;
+  border: 0; border-radius: 6px; aspect-ratio: 3/4;
+  box-shadow: 0 26px 50px -14px rgba(0,0,0,.6);
+}
+.plate--packet::after {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+  background: var(--oxblood);
+}
+
+/* one tag only, rotated with its plate */
+.plate__tag {
+  position: absolute; left: 8%; bottom: 8%;
+  background: var(--paper); color: var(--hero-ground);
+  padding: 5px 10px; border-radius: 2px;
+  box-shadow: 0 6px 14px -6px rgba(0,0,0,.5);
+}
+.plate__tag b { display: block; font-family: Fraunces, serif; font-weight: 600; font-size: 0.72rem; }
+.plate__tag .tamil { display: block; font-size: 0.62rem; color: var(--ink-soft); }
+
+@media (max-width: 999px) {
+  .hero__table { order: -1; width: 100%; aspect-ratio: 16/10; }
+  .plate { rotate: 0deg; }
+  .plate--kanji { rotate: -1deg; } .plate--dosai { rotate: 1.2deg; } .plate--packet { rotate: -1.4deg; }
+}
+@media (max-width: 719px) {
+  .hero__table {
+    width: 100vw; margin-inline: calc(50% - 50vw);
+    aspect-ratio: 16/11; border-radius: 0;
+  }
+  .plate { border-width: 3px; }
+  .hero__cta .btn { flex: 1 1 100%; justify-content: center; min-height: 52px; }
+}
+@media (max-width: 560px) {
+  /* three overlapping photos on a 360px screen is mush */
+  .plate--samba { display: none; }
+  .plate--kanji  { left: 3%;  top: 6%;  width: 56%; }
+  .plate--dosai  { right: 3%; left: auto; top: 14%; bottom: auto; width: 40%; }
+  .plate--packet { right: 8%; bottom: 4%; width: 30%; }
+  .hero h1 { max-width: 14ch; }
+}
+
+/* --- nav sitting on the dark fold --- */
+.nav__logo-light { display: none; }
+/* The nav is sticky in normal flow, so it occupies its own strip above the
+   hero. Transparent would show the cream body through it and make cream nav
+   text invisible — so it takes the hero gradient's own first stop instead,
+   and the two read as one continuous dark field. */
+.nav--on-dark:not([data-stuck="true"]) {
+  background: var(--hero-ground); backdrop-filter: none; border-bottom-color: transparent;
+}
+.nav--on-dark:not([data-stuck="true"]) .nav__logo-dark { display: none; }
+.nav--on-dark:not([data-stuck="true"]) .nav__logo-light { display: block; }
+.nav--on-dark:not([data-stuck="true"]) .nav__logo-text b { color: var(--paper); }
+.nav--on-dark:not([data-stuck="true"]) .nav__logo-text span,
+.nav--on-dark:not([data-stuck="true"]) .nav__links a {
+  color: color-mix(in srgb, var(--paper) 78%, transparent);
+}
+.nav--on-dark:not([data-stuck="true"]) .cart-btn {
+  background: transparent; border-color: color-mix(in srgb, var(--paper) 40%, transparent);
+  color: var(--paper);
+}
+
+/* ==========================================================================
+   21. HOW TO ORDER strip — the only place we explain there is no checkout
+   ========================================================================== */
+
+.howto { background: var(--surface); padding-block: var(--s8); }
+.howto__frame {
+  border: 1px solid var(--rule); border-radius: var(--r3);
+  padding: clamp(var(--s5), 3vw, var(--s7));
+  position: relative;
+}
+.howto__frame::after {
+  content: ""; position: absolute; inset: 6px;
+  border: 1px solid color-mix(in srgb, var(--rule) 55%, transparent);
+  border-radius: calc(var(--r3) - 4px); pointer-events: none;
+}
+.howto__steps {
+  display: grid; gap: var(--s5); margin-top: var(--s5);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+}
+.howto__steps li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s4); align-items: baseline; }
+.howto__steps b {
+  font-family: Fraunces, serif; font-size: var(--t-lg); font-weight: 600;
+  /* not gold: gold on cream is 3.00:1, which fails as text */
+  color: var(--oxblood); font-variant-numeric: tabular-nums;
+}
+.howto__foot {
+  margin-top: var(--s5); padding-top: var(--s4);
+  border-top: 1px solid var(--rule);
+  font-size: var(--t-xs); color: var(--ink-soft);
+}
+
+/* ==========================================================================
+   22. QUICK ADD — add several mixes without opening a page
+   ========================================================================== */
+
+.quickadd { position: relative; z-index: 1; padding: 0 var(--s5) var(--s5); }
+.quickadd__label { display: block; margin-bottom: var(--s2); }
+.quickadd__row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s2); }
+
+.qa {
+  min-height: 56px; padding: var(--s2);
+  font: inherit; font-size: var(--t-sm); font-weight: 700;
+  background: var(--paper); color: var(--ink);
+  border: 1px solid var(--rule); border-radius: var(--r2);
+  cursor: pointer;
+  transition: border-color 160ms var(--ease), background-color 160ms var(--ease);
+}
+.qa span { font-weight: 400; color: var(--ink-soft); }
+@media (hover: hover) and (pointer: fine) {
+  .qa:hover { border-color: var(--pc); background: var(--surface); }
+}
+
+/* the tapped size becomes a stepper in the same cell */
+/* Two rows: the pack size labels the cell, the controls sit under it. An
+   absolutely-positioned size label collided with the quantity digit. */
+.qa-step {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) 32px;
+  grid-template-rows: auto 1fr;
+  align-items: center;
+  min-height: 56px; padding-top: 4px;
+  background: var(--pc); color: var(--paper);
+  border-radius: var(--r2);
+}
+.qa-step__g {
+  grid-column: 1 / -1; grid-row: 1;
+  text-align: center; line-height: 1;
+  font-size: 0.64rem; font-weight: 400;
+  color: color-mix(in srgb, var(--paper) 72%, transparent);
+  pointer-events: none;
+}
+/* stretch into the whole lower row so the tap target is as tall as the cell
+   allows — 32x42. Width is capped by the 3-column cell, not by choice. */
+.qa-step button {
+  grid-row: 2; align-self: stretch;
+  width: 32px; height: auto; min-height: 34px; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; color: var(--paper);
+  border: 0; cursor: pointer;
+}
+.qa-step > button:first-of-type { grid-column: 1; }
+.qa-step > button:last-of-type  { grid-column: 3; }
+.qa-step button[disabled] { opacity: .4; cursor: default; }
+.qa-step button .icon { width: 1em; height: 1em; }
+.qa-step__n {
+  grid-column: 2; grid-row: 2; align-self: stretch;
+  width: 100%; min-width: 0; height: auto; min-height: 34px; padding: 0;
+  font: inherit; font-weight: 700; font-size: var(--t-base);
+  font-variant-numeric: tabular-nums; text-align: center;
+  background: transparent; color: var(--paper);
+  border: 0;
+}
+.qa-step__n:focus-visible { outline: 2px solid var(--paper); outline-offset: -2px; }
+
+.card[data-in-order] { box-shadow: inset 0 0 0 2px var(--pc); }
+.card__state { font-size: var(--t-xs); font-weight: 700; color: var(--pc); }
+.card__nuts { font-size: var(--t-xs); color: var(--ink-soft); }
+.card__dish { aspect-ratio: 16 / 10; }
+.card__media img { width: 100%; }
+.card__media { padding: 0; background: var(--pc); }
+.card__media img { aspect-ratio: 16/10; object-fit: cover; border-radius: 0; box-shadow: none; }
+
+.chips--presets { margin-top: var(--s3); }
+.chip--preset { border-style: dashed; font-weight: 700; }
+
+/* --- single-column order rows on phones: this IS the order pad --- */
+@media (max-width: 719px) {
+  .cards { grid-template-columns: 1fr; gap: var(--s4); }
+  .card { display: grid; grid-template-columns: 88px minmax(0, 1fr); align-items: start; }
+  .card__media { border-radius: var(--r3) 0 0 0; }
+  .card__media img { aspect-ratio: 1; height: 100%; }
+  .card__body { padding: var(--s4); gap: var(--s1); }
+  .card__tamil, .card__price span { display: none; }
+  .quickadd { grid-column: 1 / -1; margin: 0; padding: 0 var(--s4) var(--s4); }
+  .card > .card__body { grid-column: 2; }
+  .card { grid-template-areas: "media body" "add add"; }
+  .card__media { grid-area: media; }
+  .card__body { grid-area: body; }
+  .quickadd { grid-area: add; }
+}
+
+/* ==========================================================================
+   23. STICKY ORDER BAR — this is the checkout, since there isn't one
+   ========================================================================== */
+
+.order-bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 260;
+  background: var(--hero-ground); color: var(--paper);
+  padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+  box-shadow: 0 -10px 30px -12px rgba(0,0,0,.5);
+}
+.order-bar__inner { display: flex; align-items: center; gap: var(--s4); }
+.order-bar__hint {
+  font-weight: 400; font-size: var(--t-xs);
+  color: color-mix(in srgb, var(--paper) 70%, transparent);
+}
+@media (max-width: 560px) { .order-bar__hint { display: none; } }
+
+.order-bar__summary {
+  flex: 1; min-width: 0; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: var(--s3);
+  min-height: 44px; padding: 0;
+  font: inherit; font-size: var(--t-sm); font-weight: 700;
+  background: transparent; color: var(--paper); border: 0; cursor: pointer;
+  text-align: left;
+}
+.order-bar__summary .icon { width: 1.2em; height: 1.2em; }
+.order-bar__edit {
+  font-weight: 400; font-size: var(--t-xs);
+  color: color-mix(in srgb, var(--paper) 70%, transparent);
+  text-decoration: underline;
+}
+.order-bar .btn--wa { background: var(--gold); color: var(--ink); }   /* 5.16:1 */
+@media (hover: hover) and (pointer: fine) { .order-bar .btn--wa:hover { background: #e08a1a; } }
+
+/* the floating dock would sit on top of the bar's button */
+body.has-orderbar .wa-dock { display: none; }
+body.has-orderbar { padding-bottom: 76px; }
+
+/* ==========================================================================
+   24. ENQUIRY — bulk, custom, abroad, questions, feedback
+   ========================================================================== */
+
+.enquiry { background: var(--plum); color: var(--paper); padding-block: var(--s10); }
+.enquiry .kicker { color: color-mix(in srgb, var(--paper) 66%, transparent); }
+.enquiry h2 { max-width: 18ch; }
+.enquiry__lede {
+  margin-top: var(--s5); max-width: 56ch; font-size: var(--t-md);
+  color: color-mix(in srgb, var(--paper) 82%, transparent);
+}
+.tiles {
+  display: grid; gap: var(--s4); margin-top: var(--s8);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+}
+.tile {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: var(--s4); align-items: center;
+  min-height: 64px; padding: var(--s5);
+  background: color-mix(in srgb, var(--paper) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--paper) 22%, transparent);
+  border-radius: var(--r3);
+  text-decoration: none;
+  transition: background-color 180ms var(--ease), border-color 180ms var(--ease);
+}
+.tile__icon { width: 1.5em; height: 1.5em; color: var(--gold); }
+.tile__body b { display: block; font-size: var(--t-base); }
+.tile__body span {
+  display: block; margin-top: 2px; font-size: var(--t-sm);
+  color: color-mix(in srgb, var(--paper) 74%, transparent);
+}
+.tile__go { width: 1.1em; height: 1.1em; color: color-mix(in srgb, var(--paper) 60%, transparent); }
+@media (hover: hover) and (pointer: fine) {
+  .tile:hover { background: color-mix(in srgb, var(--paper) 14%, transparent); border-color: var(--gold); }
+}
+.enquiry__foot {
+  margin-top: var(--s7); padding-top: var(--s5);
+  border-top: 1px solid color-mix(in srgb, var(--paper) 22%, transparent);
+  font-size: var(--t-sm); color: color-mix(in srgb, var(--paper) 70%, transparent);
+}
+
+/* ==========================================================================
+   25. SAMPLE REVIEW MARQUEE
+   ========================================================================== */
+
+.reviews--sample { background: var(--surface); padding-block: var(--s10); overflow: hidden; }
+.reviews--sample .section-head { margin-bottom: var(--s6); }
+.marquee { position: relative; display: flex; gap: var(--s5); overflow-x: hidden; padding-block: var(--s2); }
+.marquee__track {
+  display: flex; gap: var(--s5); width: max-content; flex: none;
+  animation: marquee-scroll 42s linear infinite;
+}
+.marquee.is-paused .marquee__track { animation-play-state: paused; }
+.marquee:hover .marquee__track,
+.marquee:focus-within .marquee__track { animation-play-state: paused; }
+@keyframes marquee-scroll { to { transform: translateX(calc(-100% - var(--s5))); } }
+
+.sample-card {
+  flex: none; width: min(78vw, 20rem);
+  display: flex; flex-direction: column; gap: var(--s3);
+  padding: var(--s5);
+  background: var(--paper);
+  border: 1.5px dashed var(--rule);
+  border-radius: var(--r3);
+}
+.sample-card__tag {
+  font-size: var(--t-xs); font-weight: 700; letter-spacing: 0.04em;
+  color: var(--ink-soft);
+}
+.sample-card__body { font-family: Fraunces, serif; font-size: var(--t-base); line-height: 1.4; }
+.reviews__cta { margin-top: var(--s6); font-size: var(--t-sm); font-weight: 700; }
+.reviews__cta .icon { width: 0.9em; height: 0.9em; }
+
+@media (prefers-reduced-motion: reduce) {
+  /* the track is a flex item of .marquee and would otherwise refuse to shrink */
+  .marquee__track { animation: none; flex-wrap: wrap; width: auto; flex: 1 1 auto; min-width: 0; }
+  .marquee__track[aria-hidden="true"] { display: none; }
+  .marquee { overflow: visible; }
+  [data-marquee-toggle] { display: none; }
+  .sample-card { width: auto; flex: 1 1 18rem; }
+}
+
+/* ==========================================================================
+   26. INGREDIENT DISCS — the label's own photos, laid out natively
+   ========================================================================== */
+
+.ingr { margin: var(--s8) 0 0; }
+.ingr__row {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: clamp(8px, 1.4vw, 20px);
+}
+.ingr__item img {
+  width: 100%; aspect-ratio: 1; border-radius: 50%;
+  /* the crop's own cream fills the disc, so there is no cut edge or halo */
+  background: var(--surface);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--gold) 55%, transparent),
+              0 10px 24px -12px rgba(0,0,0,.6);
+}
+.ingr__item span {
+  display: block; margin-top: var(--s2);
+  font-size: var(--t-xs); text-align: center; line-height: 1.3;
+  min-height: 2.6em;
+  color: color-mix(in srgb, var(--paper) 78%, transparent);
+}
+/* off the baseline on purpose — a perfect row of circles is an icon-grid tell */
+.ingr__item:nth-child(even) { transform: translateY(6px); }
+.ingr figcaption {
+  margin-top: var(--s5); font-size: var(--t-sm);
+  color: color-mix(in srgb, var(--paper) 70%, transparent);
+  max-width: 60ch;
+}
+@media (prefers-reduced-motion: reduce) { .ingr__item:nth-child(even) { transform: none; } }
+@media (max-width: 719px) {
+  .ingr__row { grid-template-columns: repeat(4, 1fr); gap: var(--s4) var(--s3); }
+  .ingr__item:last-child { grid-column: 2 / 4; }
+}
+
+/* the proof band now stacks creds above the discs */
+.proof__grid { display: grid; gap: var(--s8); grid-template-columns: minmax(0, 1fr); }
+.proof .section-head h2 { max-width: 18ch; }
+.proof .kicker { color: color-mix(in srgb, var(--on-green) 68%, transparent); }
+
+/* ==========================================================================
+   27. FAQ + story
+   ========================================================================== */
+
+.faq { padding-block: var(--s10); }
+.faq__grid {
+  display: grid; gap: clamp(var(--s6), 5vw, var(--s9));
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  align-items: start;
+}
+@media (max-width: 900px) { .faq__grid { grid-template-columns: minmax(0, 1fr); } }
+.faq__side h2 { margin-top: var(--s3); font-size: var(--t-xl); max-width: 14ch; }
+/* the illustration sits in a cream card whose ground matches its own, so the
+   edge disappears without a mask */
+.faq__art {
+  margin: var(--s7) 0 0; padding: var(--s4);
+  background: var(--surface); border-radius: var(--r3);
+  max-width: 520px;
+}
+.faq__art img { border-radius: var(--r2); }
+.faq__art figcaption {
+  margin-top: var(--s3); font-size: var(--t-xs);
+  color: var(--ink-soft); font-style: italic; text-align: center;
+}
+
+.faq__item { border-bottom: 1px solid var(--rule); }
+.faq__item summary {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s4);
+  padding-block: var(--s5);
+  font-family: Fraunces, serif; font-size: var(--t-md); font-weight: 600;
+  cursor: pointer; list-style: none;
+}
+.faq__item summary::-webkit-details-marker { display: none; }
+.faq__chev { width: 1.1em; height: 1.1em; color: var(--pc); flex: none; transition: transform 200ms var(--ease); }
+.faq__item[open] .faq__chev { transform: rotate(180deg); }
+.faq__a { padding-bottom: var(--s5); max-width: var(--measure); color: var(--ink-soft); }
+@media (prefers-reduced-motion: reduce) { .faq__chev { transition: none; } }
+
+/* ==========================================================================
+   28. DARKER CLOSE + FOOTER, per the section colour map
+   ========================================================================== */
+
+.close { background: var(--oxblood); color: var(--paper); padding-block: var(--s11); }
+.close h2 { font-size: var(--t-2xl); max-width: 18ch; margin-inline: auto; }
+.close p { color: color-mix(in srgb, var(--paper) 78%, transparent); }
+.close__num { color: color-mix(in srgb, var(--paper) 65%, transparent); }
+.close .btn--wa { background: var(--gold); color: var(--ink); }
+@media (hover: hover) and (pointer: fine) { .close .btn--wa:hover { background: #e08a1a; } }
+
+.footer { background: var(--ink); color: var(--paper); border-top: 0; }
+.footer h3 { color: var(--paper); }
+.footer p, .footer a { color: color-mix(in srgb, var(--paper) 76%, transparent); }
+.footer li { border: 0; }
+.footer__mark { width: 116px; height: auto; margin-bottom: var(--s4); }
+.footer__social a { border-color: color-mix(in srgb, var(--paper) 30%, transparent); }
+@media (hover: hover) and (pointer: fine) {
+  .footer__social a:hover { border-color: var(--gold); color: var(--gold); }
+}
+.footer__legal {
+  border-top-color: color-mix(in srgb, var(--paper) 20%, transparent);
+  color: color-mix(in srgb, var(--paper) 60%, transparent);
+}
+
+/* ==========================================================================
+   29. PRODUCT DETAIL — the plate band becomes a full-width ground
+   ========================================================================== */
+
+.detail__band { background: var(--pc); color: var(--paper); padding-block: var(--s8); }
+.detail__grid {
+  display: grid; gap: clamp(var(--s6), 5vw, var(--s8));
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  align-items: center;
+}
+@media (max-width: 940px) { .detail__grid { grid-template-columns: minmax(0, 1fr); } }
+.detail__plate { margin: 0; }
+.detail__plate img {
+  border-radius: var(--r2);
+  box-shadow: 0 24px 50px -20px rgba(0,0,0,.6);
+}
+.crumbs--dark, .crumbs--dark a { color: color-mix(in srgb, var(--paper) 72%, transparent); }
+.crumbs--dark [aria-current] { color: var(--paper); }
+.detail__cat { color: var(--gold); margin-top: var(--s5); }
+.detail__intro h1 { font-size: var(--t-2xl); margin-top: var(--s2); }
+.detail__intro .detail__tamil { color: color-mix(in srgb, var(--paper) 80%, transparent); }
+.detail__tagline { color: color-mix(in srgb, var(--paper) 78%, transparent); }
+.detail__blurb { margin-top: var(--s5); max-width: var(--measure); color: color-mix(in srgb, var(--paper) 88%, transparent); }
+.detail__band .buy {
+  background: color-mix(in srgb, #000 18%, transparent);
+  border-color: color-mix(in srgb, var(--paper) 24%, transparent);
+}
+.detail__band .kicker { color: color-mix(in srgb, var(--paper) 68%, transparent); }
+.detail__band .weight {
+  background: color-mix(in srgb, var(--paper) 10%, transparent);
+  border-color: color-mix(in srgb, var(--paper) 26%, transparent);
+  color: var(--paper);
+}
+.detail__band .weight span { color: color-mix(in srgb, var(--paper) 70%, transparent); }
+.detail__band .weight[aria-pressed="true"] {
+  background: var(--paper); color: var(--ink); border-color: var(--paper); box-shadow: none;
+}
+.detail__band .weight[aria-pressed="true"] span { color: var(--ink-soft); }
+.detail__band .btn--product { background: var(--gold); color: var(--ink); }
+.detail__band .buy__note { color: color-mix(in srgb, var(--paper) 75%, transparent); }
+
+.detail__body {
+  display: grid; gap: clamp(var(--s6), 5vw, var(--s9));
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.85fr);
+  padding-block: var(--s9);
+}
+@media (max-width: 940px) { .detail__body { grid-template-columns: minmax(0, 1fr); } }
+.detail__aside .spec { margin-top: 0; }
+
+/* ==========================================================================
+   30. PRINT — dark grounds must not print as invisible cream-on-white
+   ========================================================================== */
+
+@media print {
+  .hero, .enquiry, .proof, .close, .footer, .detail__band, .order-bar {
+    background: #fff !important; color: #2A1C12 !important;
+  }
+  .hero h1, .hero h1 em, .hero__sub, .hero__licence,
+  .enquiry *, .proof *, .close *, .footer *, .detail__band * {
+    color: #2A1C12 !important;
+  }
+  .hero__table, .marquee, .reviews--sample, .tiles, .wa-dock, .order-bar { display: none !important; }
+}

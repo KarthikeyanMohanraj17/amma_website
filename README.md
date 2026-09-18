@@ -73,30 +73,42 @@ all appear by themselves.
 Add it to `comingSoon` in `products.js`. If every `items` list there is empty,
 that whole section disappears from the site — it never looks unfinished.
 
-### Testimonials
+### Sample reviews — turn these off before you share the site
 
-Near the bottom of `products.js`:
+`products.js` has `showSampleReviews: true`. That shows a placeholder layout so
+you can see how the reviews section looks and moves.
 
-```js
-testimonials: [
-  { name: "Lakshmi R.", place: "Coimbatore", rating: 5,
-    text: "What they actually said.",
-    product: "health-mix", date: "2026-08" },
-]
-```
+**Set it to `false` before you share the site publicly**, or paste a real review
+into `testimonials` (which switches the real section on automatically). `node
+build.js` prints a warning every time you build while the samples are showing.
 
-- `product` is a product's `slug`, and puts the quote on that product's page as
-  well as the home page. Use `""` for general feedback about the brand.
-- `rating` is 1–5, or leave it out for a quote with no stars.
-- `place` can be `""`.
+The sample cards deliberately carry **no name, no town, no star rating and no
+date**. That is not laziness — India's BIS IS 19000 requires a verified identity,
+a real rating and a date on any published review, and Google penalises fake
+review markup. Nothing in the site's machine-readable data claims a rating while
+you have none.
 
-**While the list is empty the testimonials section does not exist on any page.**
-No empty "reviews" box, no "be the first to review". It appears the moment you
-add a real one.
+### Enquiry options
 
-Only put real feedback here. Beyond the honesty of it: the site publishes review
-data in a format Google reads, and Google penalises sites that publish invented
-ratings. Right now no rating data is published at all, because you have none yet.
+`products.js` has an `enquiries` list — bulk order, custom blend, sending it
+abroad, a product question, and feedback. Each one opens WhatsApp with its first
+line already written. Edit the wording there; the tiles rebuild themselves.
+
+The feedback option is the honest route to real reviews: it asks the customer in
+the message whether you may publish what they say.
+
+### Questions (FAQ)
+
+`products.js` has a `faq` list. Answer honestly — an awkward true answer earns
+more trust than a polished vague one. "Prices are on WhatsApp while we finish the
+price list" is a line a template would never write, which is exactly why it works.
+
+### Allergens
+
+Each product has an `allergens` list, shown on its page. Health Mix declares
+peanuts, almonds, pistachios and cashews. Under India's FSS labelling rules these
+declarations must reach the customer **before** they buy when you sell online, so
+keep them accurate and consistent with the printed pack.
 
 ---
 
@@ -104,17 +116,26 @@ ratings. Right now no rating data is published at all, because you have none yet
 
 ### The order list (cart)
 
-Customers add several products and sizes, then send **one** WhatsApp message
-with everything:
+Customers tap pack sizes straight on the product cards — no need to open each
+product page — and send **one** WhatsApp message with everything:
 
 ```
-Hello Adisil! I'd like to order:
+*Hello Adisil! I'd like to order:*
 
-1. Health Mix — 250g × 2
-2. Mappillai Samba Kanji Mix — 500g × 1
+- Health Mix 250g x2
+- Multi Millet Dosai Mix 500g x1
+- Mappillai Samba Kanji Mix 500g x1
 
 Could you confirm the price and delivery?
 ```
+
+The `*bold*` is WhatsApp's own formatting, so the first line and the total stand
+out in a busy inbox. Product names are sent in English only: the same list in
+Tamil is about four times longer once encoded into a link, and WhatsApp truncates
+long ones.
+
+Tapping a size turns that button into a **− 1 +** stepper in place, so a second
+size is one more tap. A running total sits in a bar at the bottom of the screen.
 
 The list is saved in their own browser, so it survives moving between pages and
 closing the tab. Nothing is sent anywhere until they tap the button, and no
@@ -179,6 +200,7 @@ background.
 
 ```
 build.js                   the generator. Run it after editing products.js
+lib/imgsize.js             reads real image sizes at build time (no dependency)
 assets/js/products.js      ← ALL YOUR CONTENT LIVES HERE
 assets/js/site.js          cart, floating button, filters, animation
 assets/css/style.css       all styling; design tokens at the top
@@ -186,6 +208,7 @@ assets/labels/             product label images
 assets/art/                artwork cropped from the labels
 assets/brand/              logo and favicons
 assets/icons/              source icons + sprite.html (inlined at build time)
+assets/ingredients/        the 7 ingredient bowls, cut from the Ulundhu pack
 .tastemaker/style-lock.md  the design system: colours, type, spacing, and why
 index.html                 generated — edit products.js, not this
 products.html              generated

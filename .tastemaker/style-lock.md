@@ -145,3 +145,83 @@ widths are not clamped to Chrome's 500px window floor):
 - `anti_slop_scan.py` clean (one false positive: `href="#" + slug` in main.js is a
   real anchor). `audit_motion.py` passes. All SVGs valid.
 - Renders correctly from `file://` with no server.
+
+---
+
+## Revision 2 (2026-09-19) — colour ratio, quick-add, enquiry, reviews
+
+The owner's complaint was that the site read as "creamy white". Measured before
+touching anything: **90.5% of the home page was cream, 0.3% was the brand green.**
+The palette was right; the *ratio* was wrong — five label colours surviving as
+4px rails. After this revision: **67.8% cream, 28.7% deep ground.**
+
+### New section grounds — all five already existed as label rails
+
+| Token | Hex | Used for | Cream on it |
+|---|---|---|---|
+| `--hero-ground` | `#063314` | hero top, proof band, order bar | 13.20:1 |
+| `--hero-ground-2` | `#052810` | hero gradient mid-stop | 14.95:1 |
+| `--oxblood` | `#3E0100` | hero gradient end, close band | 16.29:1 |
+| `--plum` | `#450D31` | enquiry band | 14.53:1 |
+| `--maroon` | `#340000` | Dosai Mix product band | 17.18:1 |
+| `--navy` | `#002D68` | Mappillai Samba product band | 12.50:1 |
+| `--ink` | `#2A1C12` | footer | 15.47:1 |
+
+Deep colours are now full-bleed **sections**, never 3–4px accents. No two deep
+bands sit adjacent without a cream or sand band between them.
+
+### A real contrast failure was fixed, not introduced
+
+`--gold #D07C0A` on `--green #15551C` measures **2.80:1** — below even the 3:1
+non-text floor. The proof band's gold icons were failing that in the shipped
+site. Moving the band to `--hero-ground #063314` raises the same pairing to
+**4.40:1**. `--green` is therefore **retired as a section ground** and survives
+only as the WhatsApp button fill on cream (8.39:1).
+
+Gold's remaining rules, verified with `check_contrast.py`:
+- On the deep grounds it is **large text only** (≥18.66px bold): 4.40:1 on
+  bottle green, 4.85:1 on plum. `.hero h1 em` renders at 33.4px/600 and
+  `.hero__mark .tamil` at 20px/600 — both measured, both legal.
+- On cream it is **3.00:1 and stays fill-only**, exactly as revision 1 said. The
+  how-to-order numerals were briefly gold and are now `--oxblood` for that reason.
+- `--ink` on `--gold` is 5.16:1, which is what makes the gold order-bar and
+  close buttons legal.
+
+### Structure added
+
+- **Hero** replaced. The poster fold ("Everything in the packet is printed on the
+  packet") was clever but did not say what is sold. Now: dark ground, four
+  overlapping photographic plates cut from the labels, and a headline that names
+  the category outright. The family illustration left the fold for the FAQ block.
+- **Quick-add** on every product card — pack-size buttons that become steppers in
+  place. `openCart()` no longer fires on add; that single call was why adding
+  several products meant a close-tap between each one.
+- **Sticky order bar** on `--hero-ground`, with `env(safe-area-inset-bottom)`.
+  Suppresses `.wa-dock` while shown (verified collision at z-index 250/260).
+- **Enquiry band** on `--plum`: bulk, custom, abroad, question, feedback.
+- **Sample review marquee** — CSS-only, with a real pause button (WCAG 2.2.2;
+  hover/focus pause alone does not satisfy it) and a reduced-motion static grid.
+- **Ingredient discs** replace the pasted-on white strip. Each of the seven bowls
+  is cut from the pack with an alpha mask; the disc is filled with `--surface`,
+  which is the artwork's own cream, so there is no cut edge to hide. The
+  `mask-image` fade this replaced was the cause of the seam, not the cure.
+
+### Assets corrected
+
+`bowl-samba.jpg` was a crop of the label's **title block**, not a bowl —
+verified and re-cut. `bowl-ulundhu.jpg` carried the plum rail and caption text;
+`dish-millet-flour.jpg` carried a cream sliver. All re-cut from the source
+labels. Dish crops are now named `dish-<slug>` so the generator finds them
+mechanically. `assets/brand/logo-light.png` added for dark grounds.
+
+Image dimensions are now read from the file headers at build time
+(`lib/imgsize.js`, no dependency) — the old hero declared `1400×500` on a
+997×356 image, which is a layout-shift bug that can no longer recur.
+
+### Honesty constraints held
+
+No invented reviews, names, towns, ratings or dates. Sample cards carry no
+person and no rating, are `<div>` not `<figure>/<blockquote>`, and are marked
+`data-placeholder`. No `Review` or `AggregateRating` markup is emitted while
+`testimonials` is empty — verified in the built HTML. `node build.js` prints a
+warning while the sample layout is live.

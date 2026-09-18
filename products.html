@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>All products — Adisil Organic Foods</title>
-<meta name="description" content="Every Adisil mix, with its complete ingredient list: Health Mix, Multi Millet Dosai Mix, Karuppu Kavuni Kanji Mix, Karupu Ulundhu Kanji Mix, Mappillai Samba Kanji Mix. Made in small batches, no preservatives. Order on WhatsApp.">
-<meta name="theme-color" content="#FDF7EC">
+<meta name="description" content="Every Adisil mix with its complete ingredient list: Health Mix, Multi Millet Dosai Mix, Karuppu Kavuni Kanji Mix, Karupu Ulundhu Kanji Mix, Mappillai Samba Kanji Mix. Small batches, no preservatives. Order on WhatsApp.">
+<meta name="theme-color" content="#F7E9CF">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Adisil Organic Foods">
 <meta property="og:title" content="All products — Adisil Organic Foods">
-<meta property="og:description" content="Every Adisil mix, with its complete ingredient list: Health Mix, Multi Millet Dosai Mix, Karuppu Kavuni Kanji Mix, Karupu Ulundhu Kanji Mix, Mappillai Samba Kanji Mix. Made in small batches, no preservatives. Order on WhatsApp.">
+<meta property="og:description" content="Every Adisil mix with its complete ingredient list: Health Mix, Multi Millet Dosai Mix, Karuppu Kavuni Kanji Mix, Karupu Ulundhu Kanji Mix, Mappillai Samba Kanji Mix. Small batches, no preservatives. Order on WhatsApp.">
 <meta property="og:image" content="assets/labels/health-mix.jpg">
 <meta name="twitter:card" content="summary_large_image">
 
@@ -62,16 +62,14 @@ window.ADISIL_BASE = "";
 <header class="nav" id="nav">
   <div class="wrap nav__inner">
     <a class="nav__logo" href="index.html">
-      <img src="assets/brand/logo.png" alt="Adisil Organic Foods" width="75" height="42" fetchpriority="high">
-      <span class="nav__logo-text">
-        <b>Adisil</b>
-        <span>Organic Food</span>
-      </span>
+      <img class="nav__logo-dark" src="assets/brand/logo.png" alt="Adisil Organic Foods" width="461" height="258" fetchpriority="high">
+      <img class="nav__logo-light" src="assets/brand/logo-light.png" alt="" aria-hidden="true" width="461" height="258">
+      <span class="nav__logo-text"><b>Adisil</b><span>Organic Food</span></span>
     </a>
     <nav class="nav__links" aria-label="Main">
       <a href="products.html" aria-current="page">All products</a>
-      <a href="index.html#why">Why it keeps 3 months</a>
-      <a href="index.html#order">How to order</a>
+      <a href="index.html#enquiry">Bulk &amp; enquiries</a>
+      <a href="index.html#faq">Questions</a>
     </nav>
     <button type="button" class="cart-btn" data-cart-open aria-haspopup="dialog">
       <svg class="icon" aria-hidden="true"><use href="#i-shopping-bag"></use></svg>
@@ -88,16 +86,19 @@ window.ADISIL_BASE = "";
         <a href="index.html">Home</a> <svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg> <span aria-current="page">All products</span>
       </nav>
       <h1>Everything we make</h1>
-      <p class="page-head__lede">
-        5 products, each with its full ingredient list printed on
-        this site exactly as it appears on the pack. Every one comes in
-        100g, 250g, 500g.
-      </p>
+      <p class="page-head__lede">5 products, each with its full
+      ingredient list printed here exactly as it appears on the pack. Every one comes
+      in 100g, 250g, 500g. Tap a size to add it — you can pick several and
+      send one message.</p>
       <div class="chips" role="group" aria-label="Filter by category">
         <button type="button" class="chip" data-filter="All" aria-pressed="true">All</button>
         <button type="button" class="chip" data-filter="Health Mix" aria-pressed="false">Health Mix</button>
         <button type="button" class="chip" data-filter="Dosai Mix" aria-pressed="false">Dosai Mix</button>
         <button type="button" class="chip" data-filter="Kanji Mix" aria-pressed="false">Kanji Mix</button>
+      </div>
+      <div class="chips chips--presets">
+        <button type="button" class="chip chip--preset" data-preset="100">Add all 5 · 100g each</button>
+        <button type="button" class="chip chip--preset" data-preset="250">Add all 5 · 250g each</button>
       </div>
     </div>
   </section>
@@ -105,137 +106,236 @@ window.ADISIL_BASE = "";
   <section class="catalogue catalogue--flush">
     <div class="wrap">
       <div class="cards" data-grid>
-  <article class="card" style="--pc:#3E0100" data-category="Health Mix">
-    <div class="card__media">
-      <picture>
-        <source srcset="assets/labels/health-mix.webp" type="image/webp">
-        <img src="assets/labels/health-mix.jpg" width="900" height="1260"
-             loading="lazy" decoding="async" alt="">
-      </picture>
-    </div>
+  <article class="card" style="--pc:#3E0100" data-category="Health Mix" data-card="health-mix">
+    <div class="card__media"><picture><source srcset="assets/art/dish-health-mix.webp" type="image/webp"><img src="assets/art/dish-health-mix.jpg" width="700" height="510" alt="" loading="lazy" decoding="async" class="card__dish"></picture></div>
     <div class="card__body">
       <span class="kicker card__cat">Health Mix</span>
       <p class="card__tamil tamil">ஹெல்த் மிக்ஸ்</p>
       <h3><a href="product/health-mix.html">Health Mix</a></h3>
-      <span class="card__count">20 ingredients</span>
+      <span class="card__count">20 ingredients, all named</span>
+      <span class="card__nuts">Contains peanuts, almonds, pistachios, cashews</span>
+      <p class="card__state" data-card-state hidden></p>
       <p class="card__price">Price on WhatsApp<span> · 100g</span></p>
-      <span class="card__more">View product <svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></span>
     </div>
+
+      <div class="quickadd" data-buy data-slug="health-mix" data-name="Health Mix">
+        <span class="quickadd__label kicker">Add a pack</span>
+        <div class="quickadd__row" role="group" aria-label="Pack sizes for Health Mix">
+        <button type="button" class="qa" data-qa-add data-grams="100"
+              aria-label="Add Health Mix, 100 grams">100<span>g</span></button>
+        <button type="button" class="qa" data-qa-add data-grams="250"
+              aria-label="Add Health Mix, 250 grams">250<span>g</span></button>
+        <button type="button" class="qa" data-qa-add data-grams="500"
+              aria-label="Add Health Mix, 500 grams">500<span>g</span></button>
+        </div>
+      </div>
   </article>
-  <article class="card" style="--pc:#340000" data-category="Dosai Mix">
-    <div class="card__media">
-      <picture>
-        <source srcset="assets/labels/dosai-mix.webp" type="image/webp">
-        <img src="assets/labels/dosai-mix.jpg" width="900" height="1260"
-             loading="lazy" decoding="async" alt="">
-      </picture>
-    </div>
+  <article class="card" style="--pc:#340000" data-category="Dosai Mix" data-card="dosai-mix">
+    <div class="card__media"><picture><source srcset="assets/art/dish-dosai-mix.webp" type="image/webp"><img src="assets/art/dish-dosai-mix.jpg" width="554" height="276" alt="" loading="lazy" decoding="async" class="card__dish"></picture></div>
     <div class="card__body">
       <span class="kicker card__cat">Dosai Mix</span>
       <p class="card__tamil tamil">மல்டி மில்லெட் தோசை மாவு</p>
       <h3><a href="product/dosai-mix.html">Multi Millet Dosai Mix</a></h3>
       
+      
+      <p class="card__state" data-card-state hidden></p>
       <p class="card__price">Price on WhatsApp<span> · 100g</span></p>
-      <span class="card__more">View product <svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></span>
     </div>
+
+      <div class="quickadd" data-buy data-slug="dosai-mix" data-name="Multi Millet Dosai Mix">
+        <span class="quickadd__label kicker">Add a pack</span>
+        <div class="quickadd__row" role="group" aria-label="Pack sizes for Multi Millet Dosai Mix">
+        <button type="button" class="qa" data-qa-add data-grams="100"
+              aria-label="Add Multi Millet Dosai Mix, 100 grams">100<span>g</span></button>
+        <button type="button" class="qa" data-qa-add data-grams="250"
+              aria-label="Add Multi Millet Dosai Mix, 250 grams">250<span>g</span></button>
+        <button type="button" class="qa" data-qa-add data-grams="500"
+              aria-label="Add Multi Millet Dosai Mix, 500 grams">500<span>g</span></button>
+        </div>
+      </div>
   </article>
-  <article class="card" style="--pc:#063314" data-category="Kanji Mix">
-    <div class="card__media">
-      <picture>
-        <source srcset="assets/labels/karuppu-kavuni-kanji.webp" type="image/webp">
-        <img src="assets/labels/karuppu-kavuni-kanji.jpg" width="900" height="1274"
-             loading="lazy" decoding="async" alt="">
-      </picture>
-    </div>
+  <article class="card" style="--pc:#063314" data-category="Kanji Mix" data-card="karuppu-kavuni-kanji">
+    <div class="card__media"><picture><source srcset="assets/art/dish-karuppu-kavuni-kanji.webp" type="image/webp"><img src="assets/art/dish-karuppu-kavuni-kanji.jpg" width="496" height="316" alt="" loading="lazy" decoding="async" class="card__dish"></picture></div>
     <div class="card__body">
       <span class="kicker card__cat">Kanji Mix</span>
       <p class="card__tamil tamil">கருப்பு கவுனி கஞ்சி</p>
       <h3><a href="product/karuppu-kavuni-kanji.html">Karuppu Kavuni Kanji Mix</a></h3>
-      <span class="card__count">2 ingredients</span>
+      <span class="card__count">2 ingredients, all named</span>
+      
+      <p class="card__state" data-card-state hidden></p>
       <p class="card__price">Price on WhatsApp<span> · 100g</span></p>
-      <span class="card__more">View product <svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></span>
     </div>
+
+      <div class="quickadd" data-buy data-slug="karuppu-kavuni-kanji" data-name="Karuppu Kavuni Kanji Mix">
+        <span class="quickadd__label kicker">Add a pack</span>
+        <div class="quickadd__row" role="group" aria-label="Pack sizes for Karuppu Kavuni Kanji Mix">
+        <button type="button" class="qa" data-qa-add data-grams="100"
+              aria-label="Add Karuppu Kavuni Kanji Mix, 100 grams">100<span>g</span></button>
+        <button type="button" class="qa" data-qa-add data-grams="250"
+              aria-label="Add Karuppu Kavuni Kanji Mix, 250 grams">250<span>g</span></button>
+        <button type="button" class="qa" data-qa-add data-grams="500"
+              aria-label="Add Karuppu Kavuni Kanji Mix, 500 grams">500<span>g</span></button>
+        </div>
+      </div>
   </article>
-  <article class="card" style="--pc:#450D31" data-category="Kanji Mix">
-    <div class="card__media">
-      <picture>
-        <source srcset="assets/labels/karupu-ulundhu-kanji.webp" type="image/webp">
-        <img src="assets/labels/karupu-ulundhu-kanji.jpg" width="900" height="1350"
-             loading="lazy" decoding="async" alt="">
-      </picture>
-    </div>
+  <article class="card" style="--pc:#450D31" data-category="Kanji Mix" data-card="karupu-ulundhu-kanji">
+    <div class="card__media"><picture><source srcset="assets/art/dish-karupu-ulundhu-kanji.webp" type="image/webp"><img src="assets/art/dish-karupu-ulundhu-kanji.jpg" width="409" height="425" alt="" loading="lazy" decoding="async" class="card__dish"></picture></div>
     <div class="card__body">
       <span class="kicker card__cat">Kanji Mix</span>
       <p class="card__tamil tamil">கருப்பு உளுந்து கஞ்சி</p>
       <h3><a href="product/karupu-ulundhu-kanji.html">Karupu Ulundhu Kanji Mix</a></h3>
-      <span class="card__count">7 ingredients</span>
+      <span class="card__count">7 ingredients, all named</span>
+      <span class="card__nuts">Contains cashew, almond</span>
+      <p class="card__state" data-card-state hidden></p>
       <p class="card__price">Price on WhatsApp<span> · 100g</span></p>
-      <span class="card__more">View product <svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></span>
     </div>
+
+      <div class="quickadd" data-buy data-slug="karupu-ulundhu-kanji" data-name="Karupu Ulundhu Kanji Mix">
+        <span class="quickadd__label kicker">Add a pack</span>
+        <div class="quickadd__row" role="group" aria-label="Pack sizes for Karupu Ulundhu Kanji Mix">
+        <button type="button" class="qa" data-qa-add data-grams="100"
+              aria-label="Add Karupu Ulundhu Kanji Mix, 100 grams">100<span>g</span></button>
+        <button type="button" class="qa" data-qa-add data-grams="250"
+              aria-label="Add Karupu Ulundhu Kanji Mix, 250 grams">250<span>g</span></button>
+        <button type="button" class="qa" data-qa-add data-grams="500"
+              aria-label="Add Karupu Ulundhu Kanji Mix, 500 grams">500<span>g</span></button>
+        </div>
+      </div>
   </article>
-  <article class="card" style="--pc:#002D68" data-category="Kanji Mix">
-    <div class="card__media">
-      <picture>
-        <source srcset="assets/labels/mappillai-samba-kanji.webp" type="image/webp">
-        <img src="assets/labels/mappillai-samba-kanji.jpg" width="864" height="1223"
-             loading="lazy" decoding="async" alt="">
-      </picture>
-    </div>
+  <article class="card" style="--pc:#002D68" data-category="Kanji Mix" data-card="mappillai-samba-kanji">
+    <div class="card__media"><picture><source srcset="assets/art/dish-mappillai-samba-kanji.webp" type="image/webp"><img src="assets/art/dish-mappillai-samba-kanji.jpg" width="506" height="315" alt="" loading="lazy" decoding="async" class="card__dish"></picture></div>
     <div class="card__body">
       <span class="kicker card__cat">Kanji Mix</span>
       <p class="card__tamil tamil">மாப்பிள்ளை சம்பா கஞ்சி</p>
       <h3><a href="product/mappillai-samba-kanji.html">Mappillai Samba Kanji Mix</a></h3>
-      <span class="card__count">5 ingredients</span>
+      <span class="card__count">5 ingredients, all named</span>
+      
+      <p class="card__state" data-card-state hidden></p>
       <p class="card__price">Price on WhatsApp<span> · 100g</span></p>
-      <span class="card__more">View product <svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></span>
     </div>
+
+      <div class="quickadd" data-buy data-slug="mappillai-samba-kanji" data-name="Mappillai Samba Kanji Mix">
+        <span class="quickadd__label kicker">Add a pack</span>
+        <div class="quickadd__row" role="group" aria-label="Pack sizes for Mappillai Samba Kanji Mix">
+        <button type="button" class="qa" data-qa-add data-grams="100"
+              aria-label="Add Mappillai Samba Kanji Mix, 100 grams">100<span>g</span></button>
+        <button type="button" class="qa" data-qa-add data-grams="250"
+              aria-label="Add Mappillai Samba Kanji Mix, 250 grams">250<span>g</span></button>
+        <button type="button" class="qa" data-qa-add data-grams="500"
+              aria-label="Add Mappillai Samba Kanji Mix, 500 grams">500<span>g</span></button>
+        </div>
+      </div>
   </article>
       </div>
       <p class="cards__none" data-none hidden>Nothing in that category yet.</p>
     </div>
   </section>
 
+
+  <section class="enquiry" id="enquiry">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="kicker">Ask us directly</p>
+        <h2>Bulk orders, custom blends, and anything else.</h2>
+        <p class="enquiry__lede">There is no form. Pick what you need and it opens
+        WhatsApp with the first line already written, so you are not starting from a
+        blank screen. We are two people — you get a real reply, usually the same day.</p>
+      </header>
+      <div class="tiles">
+      <a class="tile" href="https://wa.me/919080404565?text=Hello%20Adisil!%20I'd%20like%20a%20bulk%20order.%0A%0AWhat%20for%20(wedding%20%2F%20function%20%2F%20office%20%2F%20shop)%3A%20%0AWhich%20mixes%3A%20%0AHow%20much%3A%20%0AWhen%20you%20need%20it%3A%20%0ADelivery%20area%3A%20">
+        <svg class="icon tile__icon" aria-hidden="true"><use href="#i-users-group"></use></svg>
+        <span class="tile__body">
+          <b>Bulk or function order</b>
+          <span>Weddings, functions, temple prasadam, office orders.</span>
+        </span>
+        <svg class="icon tile__go" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
+      </a>
+      <a class="tile" href="https://wa.me/919080404565?text=Hello%20Adisil!%20I'd%20like%20to%20ask%20about%20a%20custom%20blend.%0A%0AWhat%20I'd%20like%20changed%20or%20made%3A%20%0AWho%20it's%20for%20(age%20%2F%20any%20allergy)%3A%20%0AHow%20much%3A%20">
+        <svg class="icon tile__icon" aria-hidden="true"><use href="#i-chef-hat"></use></svg>
+        <span class="tile__body">
+          <b>Custom blend</b>
+          <span>A mix made to your recipe, or one of ours without something in it.</span>
+        </span>
+        <svg class="icon tile__go" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
+      </a>
+      <a class="tile" href="https://wa.me/919080404565?text=Hello%20Adisil!%20I'd%20like%20to%20send%20this%20to%20someone%20outside%20India.%0A%0ACountry%3A%20%0AWhich%20mixes%20and%20sizes%3A%20%0AWho%20it's%20going%20to%3A%20">
+        <svg class="icon tile__icon" aria-hidden="true"><use href="#i-plant-2"></use></svg>
+        <span class="tile__body">
+          <b>Send it abroad</b>
+          <span>Posting to family outside India. Tell us the country and we&#39;ll work out packing and cost.</span>
+        </span>
+        <svg class="icon tile__go" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
+      </a>
+      <a class="tile" href="https://wa.me/919080404565?text=Hello%20Adisil!%20I%20have%20a%20question%20about%3A%0A%0AProduct%3A%20%0AMy%20question%3A%20">
+        <svg class="icon tile__icon" aria-hidden="true"><use href="#i-message-circle"></use></svg>
+        <span class="tile__body">
+          <b>A question about a product</b>
+          <span>Ingredients, allergens, how to make it, how long it keeps.</span>
+        </span>
+        <svg class="icon tile__go" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
+      </a>
+      <a class="tile" href="https://wa.me/919080404565?text=Hello%20Adisil!%20Here's%20my%20feedback%3A%0A%0AWhat%20I%20ordered%3A%20%0AHow%20it%20was%3A%20%0A%0A(Happy%20for%20you%20to%20publish%20this%20on%20your%20website%3A%20yes%20%2F%20no)">
+        <svg class="icon tile__icon" aria-hidden="true"><use href="#i-star"></use></svg>
+        <span class="tile__body">
+          <b>Feedback</b>
+          <span>Tell us how it turned out. If you&#39;re happy for us to put it on the site, say so.</span>
+        </span>
+        <svg class="icon tile__go" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
+      </a>
+      </div>
+      <p class="enquiry__foot">We reply from the same number the order goes to:
+      +91 90804 04565 · FSSAI 22426525000345</p>
+    </div>
+  </section>
 </main>
+
+<div class="sr-only" role="status" aria-live="polite" data-live></div>
 
 <div class="drawer" id="cart" role="dialog" aria-modal="true" aria-labelledby="cart-title" hidden>
   <div class="drawer__scrim" data-cart-close></div>
   <div class="drawer__panel">
     <header class="drawer__head">
       <h2 id="cart-title">Your order</h2>
-      <button type="button" class="drawer__close" data-cart-close aria-label="Close order list">
-        <svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg>
-      </button>
+      <button type="button" class="drawer__close" data-cart-close aria-label="Close order list"><svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg></button>
     </header>
-
     <div class="drawer__body">
-      <p class="drawer__empty" data-cart-empty>
-        Nothing here yet. Add a mix and its size, and it will collect here so you
-        can send everything in one message.
-      </p>
+      <div class="drawer__empty" data-cart-empty>
+        <p>Nothing here yet. Tap a size on any mix and it collects here, so you can
+        send everything in one message.</p>
+        <p><a href="products.html">See all products</a> ·
+           <a href="index.html#enquiry">Bulk or custom order</a></p>
+      </div>
       <ul class="cart-list" data-cart-list></ul>
     </div>
-
     <footer class="drawer__foot" data-cart-foot hidden>
       <div class="cart-total" data-cart-total></div>
       <a class="btn btn--wa" data-cart-send href="https://wa.me/919080404565?text=Hello%20Adisil!%20I%20saw%20your%20website%20and%20I'd%20like%20to%20order.">
-        <svg class="icon" aria-hidden="true"><use href="#i-brand-whatsapp"></use></svg>
-        Send this order on WhatsApp
+        <svg class="icon" aria-hidden="true"><use href="#i-brand-whatsapp"></use></svg> Send this order on WhatsApp
       </a>
-      <p class="drawer__note">
-        This opens WhatsApp with your list already written out. Nothing is
-        charged here — we reply with the price and delivery.
-      </p>
+      <p class="drawer__note">Opens WhatsApp with your list already written out.
+      Nothing is charged here — we reply with the price and delivery.</p>
     </footer>
   </div>
 </div>
 
+<div class="order-bar" data-order-bar hidden>
+  <div class="wrap order-bar__inner">
+    <button type="button" class="order-bar__summary" data-cart-open>
+      <svg class="icon" aria-hidden="true"><use href="#i-shopping-bag"></use></svg>
+      <span data-order-bar-text>0 packets</span>
+      <span class="order-bar__hint">Price on WhatsApp</span>
+      <span class="order-bar__edit">Edit</span>
+    </button>
+    <a class="btn btn--wa" data-cart-send href="https://wa.me/919080404565?text=Hello%20Adisil!%20I%20saw%20your%20website%20and%20I'd%20like%20to%20order.">
+      <svg class="icon" aria-hidden="true"><use href="#i-brand-whatsapp"></use></svg> Send on WhatsApp
+    </a>
+  </div>
+</div>
+
 <div class="wa-dock" data-wa-dock>
-  <button type="button" class="wa-dock__min" data-wa-toggle aria-label="Collapse the WhatsApp button">
-    <svg class="icon" aria-hidden="true"><use href="#i-minus"></use></svg>
-  </button>
+  <button type="button" class="wa-dock__min" data-wa-toggle aria-label="Collapse the WhatsApp button"><svg class="icon" aria-hidden="true"><use href="#i-minus"></use></svg></button>
   <a class="wa-dock__btn" href="https://wa.me/919080404565?text=Hello%20Adisil!%20I%20saw%20your%20website%20and%20I'd%20like%20to%20order." aria-label="Order on WhatsApp">
-    <svg class="icon" aria-hidden="true"><use href="#i-brand-whatsapp"></use></svg>
-    <span class="wa-dock__label">Order on WhatsApp</span>
+    <svg class="icon" aria-hidden="true"><use href="#i-brand-whatsapp"></use></svg><span class="wa-dock__label">Order on WhatsApp</span>
   </a>
 </div>
 
@@ -243,11 +343,10 @@ window.ADISIL_BASE = "";
   <div class="wrap">
     <div class="footer__grid">
       <div>
+        <img class="footer__mark" src="assets/brand/logo-light.png" alt="" aria-hidden="true" width="461" height="258">
         <h3>Adisil Organic Food</h3>
-        <p style="color:var(--ink-soft)">
-          Traditional Tamil health mixes, kanji mixes, masalas, podis and thokku.
-          Freshly packed, no preservatives.
-        </p>
+        <p>Traditional Tamil health mixes, kanji mixes, masalas, podis and thokku.
+        Freshly packed, no preservatives.</p>
       </div>
       <div>
         <h3>What we make</h3>
@@ -264,8 +363,8 @@ window.ADISIL_BASE = "";
         <h3>Order &amp; enquiries</h3>
         <ul>
           <li><a href="https://wa.me/919080404565?text=Hello%20Adisil!%20I%20saw%20your%20website%20and%20I'd%20like%20to%20order.">WhatsApp +91 90804 04565</a></li>
-          <li><a href="index.html#order">How ordering works</a></li>
-          <li><a href="index.html#why">Storage &amp; shelf life</a></li>
+          <li><a href="index.html#enquiry">Bulk, custom &amp; feedback</a></li>
+          <li><a href="index.html#faq">Storage &amp; shelf life</a></li>
         </ul>
       </div>
       <div>

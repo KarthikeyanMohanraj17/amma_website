@@ -54,6 +54,9 @@ window.ADISIL = {
       tagline: "Wholesome nutrition for a stronger you",
       ingredientCount: 20,
       // Price for 100g, 250g, 500g. Fill these in when ready.
+      // Declared from this product's own printed ingredient list.
+      allergens: ["Peanuts", "Almonds", "Pistachios", "Cashews"],
+      veg: true,
       prices: { 100: null, 250: null, 500: null },
       blurb:
         "The everyday mix. Twenty grains, pulses, nuts and spices, roasted and " +
@@ -95,6 +98,8 @@ window.ADISIL = {
       // items below it — see README. Left as null so the site doesn't repeat the
       // discrepancy. Set it to a number once the label is corrected.
       ingredientCount: null,
+      allergens: [],
+      veg: true,
       prices: { 100: null, 250: null, 500: null },
       blurb:
         "Six millets, three dals and idli rice, ground to a dosai batter powder. " +
@@ -131,6 +136,8 @@ window.ADISIL = {
       kicker: "Traditional Goodness • Nutritious Living",
       tagline: "Rooted in tradition, made for today",
       ingredientCount: 2,
+      allergens: [],
+      veg: true,
       prices: { 100: null, 250: null, 500: null },
       blurb:
         "Two ingredients. Black kavuni rice — the rice Chettinad families kept " +
@@ -163,6 +170,12 @@ window.ADISIL = {
       kicker: "Traditional Nutritious Blend",
       tagline: "Wholesome ingredients for a stronger you",
       ingredientCount: 7,
+      allergens: ["Cashew", "Almond"],
+      veg: true,
+      // Circular ingredient photos cut from this product's own label.
+      // A product may only list these if it has one per ingredient.
+      ingredientIcons: ["black-urad-dal","raw-rice","dry-ginger","cardamom",
+                        "black-kavuni-rice","cashew","almond"],
       prices: { 100: null, 250: null, 500: null },
       blurb:
         "Black urad dal kanji is what Tamil homes give girls and women for bone " +
@@ -197,6 +210,8 @@ window.ADISIL = {
       kicker: "Traditional Taste • Wholesome Nutrition",
       tagline: "A nutritious start for a healthy life",
       ingredientCount: 5,
+      allergens: [],
+      veg: true,
       prices: { 100: null, 250: null, 500: null },
       blurb:
         "Mappillai samba is the red rice a bridegroom was fed to build strength — " +
@@ -289,5 +304,123 @@ window.ADISIL = {
     //   date: "2026-08"
     // },
 
+  ],
+
+  /* ---- Sample review layout -------------------------------------------
+
+     >>> TURN THIS OFF BEFORE YOU SHARE THE SITE PUBLICLY. <<<
+
+     This shows an EMPTY placeholder layout so you can see how the reviews
+     section will look and move. Nothing in it is attributed to a person —
+     there are no names, no towns, no star ratings and no dates, because
+     inventing those is illegal for a food business in India (BIS IS 19000
+     requires a real identity, a real rating and a date on every published
+     review) and Google penalises fake review markup.
+
+     The cards below just restate facts already printed on your packets.
+
+     The moment you paste one real review into `testimonials` above, the real
+     section takes over and these disappear automatically. You can also just
+     set this to false to hide the section entirely.
+     ------------------------------------------------------------------- */
+  showSampleReviews: true,
+
+  sampleReviews: [
+    "Health Mix — 20 ingredients, every one named on the pack",
+    "Karuppu Kavuni Kanji — 2 ingredients, nothing else",
+    "Nothing added to make it keep longer",
+    "Best before 3 months once the packet is opened",
+    "FSSAI licence 22426525000345",
+    "Roasted and stone-ground in small batches",
+    "100 g · 250 g · 500 g on every mix"
+  ],
+
+  /* ---- Enquiry options. Each opens WhatsApp with the first line written.
+     Edit the wording freely. `icon` must be a name in assets/icons/.
+     ------------------------------------------------------------------- */
+  enquiries: [
+    {
+      id: "bulk",
+      icon: "users-group",
+      label: "Bulk or function order",
+      desc: "Weddings, functions, temple prasadam, office orders.",
+      text: "Hello Adisil! I'd like a bulk order.\n\n" +
+            "What for (wedding / function / office / shop): \n" +
+            "Which mixes: \nHow much: \nWhen you need it: \nDelivery area: "
+    },
+    {
+      id: "custom",
+      icon: "chef-hat",
+      label: "Custom blend",
+      desc: "A mix made to your recipe, or one of ours without something in it.",
+      text: "Hello Adisil! I'd like to ask about a custom blend.\n\n" +
+            "What I'd like changed or made: \n" +
+            "Who it's for (age / any allergy): \nHow much: "
+    },
+    {
+      id: "abroad",
+      icon: "plant-2",
+      label: "Send it abroad",
+      desc: "Posting to family outside India. Tell us the country and we'll work out packing and cost.",
+      text: "Hello Adisil! I'd like to send this to someone outside India.\n\n" +
+            "Country: \nWhich mixes and sizes: \nWho it's going to: "
+    },
+    {
+      id: "question",
+      icon: "message-circle",
+      label: "A question about a product",
+      desc: "Ingredients, allergens, how to make it, how long it keeps.",
+      text: "Hello Adisil! I have a question about:\n\nProduct: \nMy question: "
+    },
+    {
+      id: "feedback",
+      icon: "star",
+      label: "Feedback",
+      desc: "Tell us how it turned out. If you're happy for us to put it on the site, say so.",
+      text: "Hello Adisil! Here's my feedback:\n\n" +
+            "What I ordered: \nHow it was: \n\n" +
+            "(Happy for you to publish this on your website: yes / no)"
+    }
+  ],
+
+  /* ---- Questions customers actually ask. Rendered as an FAQ.
+     Answer honestly. An awkward true answer builds more trust than a
+     polished vague one.
+     ------------------------------------------------------------------- */
+  faq: [
+    {
+      q: "How long does it keep?",
+      a: "Three months from the day you open the packet. That is short on purpose — " +
+         "nothing goes in to make it keep longer. Unopened and stored cool and dry, " +
+         "go by the date printed on your pack."
+    },
+    {
+      q: "How should I store it?",
+      a: "Cool and dry, out of sunlight. Use a clean, dry spoon every time — a wet " +
+         "spoon is the fastest way to spoil a mix with no preservatives in it — and " +
+         "press the pack closed after each use."
+    },
+    {
+      q: "Why is there no price on the site?",
+      a: "We are still settling the price list. Message us on WhatsApp and we will " +
+         "tell you the price for the sizes you want, the same day."
+    },
+    {
+      q: "How do I pay?",
+      a: "On WhatsApp, after we confirm what you want. There is no checkout on this " +
+         "site and nothing is charged here."
+    },
+    {
+      q: "Do you deliver outside Tamil Nadu?",
+      a: "Ask us. We arrange delivery personally for each order, so it depends on " +
+         "where you are and how much you want. We would rather tell you honestly " +
+         "than print a map we cannot keep to."
+    },
+    {
+      q: "Is it safe for children, or during pregnancy?",
+      a: "Every ingredient is listed in full on this site and on the pack, so you can " +
+         "check it against anything you need to avoid. Several mixes contain nuts. " +
+         "For anything medical, please ask your doctor — we are cooks, not clinicians."
+    }
   ]
 };
