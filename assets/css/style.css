@@ -1150,34 +1150,30 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.22e
 }
 
 /* ==========================================================================
-   21. HOW TO ORDER strip — the only place we explain there is no checkout
+   21. HOW IT WORKS — a slim shop notice, not a panel
    ========================================================================== */
 
-.howto { background: var(--surface); padding-block: var(--s8); }
-.howto__frame {
-  border: 1px solid var(--rule); border-radius: var(--r3);
-  padding: clamp(var(--s5), 3vw, var(--s7));
-  position: relative;
+.howto { background: var(--surface); padding-block: var(--s6); border-bottom: 1px solid var(--rule); }
+.howto__inner {
+  display: flex; align-items: center; gap: clamp(var(--s5), 4vw, var(--s8));
+  flex-wrap: wrap;
 }
-.howto__frame::after {
-  content: ""; position: absolute; inset: 6px;
-  border: 1px solid color-mix(in srgb, var(--rule) 55%, transparent);
-  border-radius: calc(var(--r3) - 4px); pointer-events: none;
-}
+.howto__lead { font-size: var(--t-sm); color: var(--ink-soft); flex: 0 1 auto; }
+.howto__lead b { color: var(--ink); font-weight: 700; }
 .howto__steps {
-  display: grid; gap: var(--s5); margin-top: var(--s5);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  display: flex; align-items: center; gap: clamp(var(--s4), 3vw, var(--s7));
+  flex: 1 1 auto; flex-wrap: wrap;
 }
-.howto__steps li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s4); align-items: baseline; }
+.howto__steps li {
+  display: flex; align-items: center; gap: var(--s3);
+  font-size: var(--t-sm);
+}
 .howto__steps b {
-  font-family: Fraunces, serif; font-size: var(--t-lg); font-weight: 600;
-  /* not gold: gold on cream is 3.00:1, which fails as text */
-  color: var(--oxblood); font-variant-numeric: tabular-nums;
-}
-.howto__foot {
-  margin-top: var(--s5); padding-top: var(--s4);
-  border-top: 1px solid var(--rule);
-  font-size: var(--t-xs); color: var(--ink-soft);
+  flex: none;
+  width: 22px; height: 22px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--green); color: var(--on-green);
+  font-family: Karla, sans-serif; font-size: 0.72rem; font-weight: 700;
 }
 
 /* ==========================================================================
@@ -1312,7 +1308,7 @@ body.has-orderbar { padding-bottom: 76px; }
    24. ENQUIRY — bulk, custom, abroad, questions, feedback
    ========================================================================== */
 
-.enquiry { background: var(--plum); color: var(--paper); padding-block: var(--s10); }
+.enquiry { background: var(--oxblood); color: var(--paper); padding-block: var(--s9); }
 .enquiry .kicker { color: color-mix(in srgb, var(--paper) 66%, transparent); }
 .enquiry h2 { max-width: 18ch; }
 .enquiry__lede {
@@ -1353,7 +1349,7 @@ body.has-orderbar { padding-bottom: 76px; }
    25. SAMPLE REVIEW MARQUEE
    ========================================================================== */
 
-.reviews--sample { background: var(--surface); padding-block: var(--s10); overflow: hidden; }
+.reviews--sample { background: var(--paper); padding-block: var(--s9); overflow: hidden; }
 .reviews--sample .section-head { margin-bottom: var(--s6); }
 .marquee { position: relative; display: flex; gap: var(--s5); overflow-x: hidden; padding-block: var(--s2); }
 .marquee__track {
@@ -1369,7 +1365,7 @@ body.has-orderbar { padding-bottom: 76px; }
   flex: none; width: min(78vw, 20rem);
   display: flex; flex-direction: column; gap: var(--s3);
   padding: var(--s5);
-  background: var(--paper);
+  background: var(--surface);
   border: 1.5px dashed var(--rule);
   border-radius: var(--r3);
 }
@@ -1472,12 +1468,10 @@ body.has-orderbar { padding-bottom: 76px; }
    28. DARKER CLOSE + FOOTER, per the section colour map
    ========================================================================== */
 
-.close { background: var(--oxblood); color: var(--paper); padding-block: var(--s11); }
-.close h2 { font-size: var(--t-2xl); max-width: 18ch; margin-inline: auto; }
-.close p { color: color-mix(in srgb, var(--paper) 78%, transparent); }
-.close__num { color: color-mix(in srgb, var(--paper) 65%, transparent); }
-.close .btn--wa { background: var(--gold); color: var(--ink); }
-@media (hover: hover) and (pointer: fine) { .close .btn--wa:hover { background: #e08a1a; } }
+.close { background: var(--surface); color: var(--ink); padding-block: var(--s9); }
+.close h2 { font-size: var(--t-xl); max-width: 18ch; margin-inline: auto; }
+.close p { color: var(--ink-soft); }
+.close__num { color: var(--ink-soft); }
 
 .footer { background: var(--ink); color: var(--paper); border-top: 0; }
 .footer h3 { color: var(--paper); }
@@ -1556,3 +1550,67 @@ body.has-orderbar { padding-bottom: 76px; }
   }
   .hero__table, .marquee, .reviews--sample, .tiles, .wa-dock, .order-bar { display: none !important; }
 }
+
+
+/* ==========================================================================
+   31. STORY — who makes this
+   ========================================================================== */
+
+.story { padding-block: var(--s10); }
+.story__grid {
+  display: grid; gap: clamp(var(--s6), 5vw, var(--s9));
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+}
+@media (max-width: 900px) { .story__grid { grid-template-columns: minmax(0, 1fr); } }
+/* the crop's own cream is the card ground, so the edge disappears without a mask */
+.story__art {
+  margin: 0; padding: var(--s4);
+  background: var(--surface); border-radius: var(--r3);
+}
+.story__art img { border-radius: var(--r2); }
+.story__art figcaption {
+  margin-top: var(--s3); font-size: var(--t-xs);
+  color: var(--ink-soft); font-style: italic; text-align: center;
+}
+.story__copy h2 { font-size: var(--t-xl); margin-top: var(--s3); max-width: 16ch; }
+.story__copy p { margin-top: var(--s5); max-width: var(--measure); }
+.story__sign {
+  font-family: Fraunces, serif; font-style: italic;
+  color: var(--ink-soft);
+}
+
+/* ==========================================================================
+   32. INGREDIENT INDEX — the whole range's list, in one place
+   ========================================================================== */
+
+.index { background: var(--surface); padding-block: var(--s10); }
+.index .section-head h2 { max-width: 22ch; }
+.index__wall {
+  display: flex; flex-wrap: wrap; gap: var(--s2) var(--s3);
+  margin-top: var(--s7);
+}
+.index__wall li {
+  display: inline-flex; align-items: baseline; gap: var(--s2);
+  padding: var(--s2) var(--s4);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--pc, var(--rule));
+  border-radius: var(--r2);
+  font-size: var(--t-sm);
+}
+/* the handful used in more than one mix carry the brand green instead */
+.index__wall li.is-shared { border-left-color: var(--green); }
+.index__wall li i {
+  font-style: normal; font-size: var(--t-xs); font-weight: 700;
+  color: var(--green);
+}
+.index__foot {
+  margin-top: var(--s7); padding-top: var(--s5);
+  border-top: 1px solid var(--rule);
+  font-size: var(--t-sm); color: var(--ink-soft);
+}
+
+.faq__note { margin-top: var(--s5); color: var(--ink-soft); max-width: 34ch; }
+
+/* the close band is light now, so its print override is no longer needed */

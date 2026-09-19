@@ -373,7 +373,7 @@ function enquirySection(o, product) {
       <div class="tiles">${tiles}
       </div>
       <p class="enquiry__foot">We reply from the same number the order goes to:
-      ${esc(B.whatsappDisplay)} · FSSAI ${esc(B.fssai)}</p>
+      ${esc(B.whatsappDisplay)}</p>
     </div>
   </section>`;
 }
@@ -455,12 +455,8 @@ function faqSection(o) {
       <div class="faq__side">
         <p class="kicker">Before you ask</p>
         <h2>The things people message us about.</h2>
-        <figure class="faq__art">
-          ${pic('assets/art/hero-family.jpg',
-                'Illustration from the Adisil Health Mix label: a mother feeding her son a bowl of health mix at a wooden table.',
-                { base: o.base })}
-          <figcaption>From our Health Mix label</figcaption>
-        </figure>
+        <p class="faq__note">Anything else, just ask on WhatsApp — you get a real
+        reply, usually the same day.</p>
       </div>
       <div class="faq__list">${items}
       </div>
@@ -471,17 +467,105 @@ function faqSection(o) {
 function howToOrder(o) {
   return `
   <section class="howto">
-    <div class="wrap">
-      <div class="howto__frame">
-        <p class="kicker">There is no checkout — here is how it works</p>
-        <ol class="howto__steps">
-          <li><b>01</b><span>Tap the sizes you want — 100g, 250g or 500g.</span></li>
-          <li><b>02</b><span>Your list builds itself at the bottom of the page.</span></li>
-          <li><b>03</b><span>Send it on WhatsApp. We reply with the price and arrange delivery.</span></li>
-        </ol>
-        <p class="howto__foot">${esc(B.whatsappDisplay)} · FSSAI ${esc(B.fssai)} ·
-        Prices are on WhatsApp while we finish the price list.</p>
+    <div class="wrap howto__inner">
+      <p class="howto__lead"><b>No checkout.</b> You build a list, we reply on WhatsApp.</p>
+      <ol class="howto__steps">
+        <li><b>1</b><span>Tap the sizes you want</span></li>
+        <li><b>2</b><span>Your list builds at the bottom of the page</span></li>
+        <li><b>3</b><span>Send it — we reply with the price and delivery</span></li>
+      </ol>
+    </div>
+  </section>`;
+}
+
+/* Who makes this. The illustration comes off the Health Mix label. */
+function storySection(o) {
+  return `
+  <section class="story" id="story">
+    <div class="wrap story__grid">
+      <figure class="story__art">
+        ${pic('assets/art/hero-family.jpg',
+              'Illustration from the Adisil Health Mix label: a mother feeding her son a bowl of health mix at a wooden table.',
+              { base: o.base })}
+        <figcaption>From our Health Mix label</figcaption>
+      </figure>
+      <div class="story__copy">
+        <p class="kicker">Who makes this</p>
+        <h2>Two people, one kitchen, one grinder.</h2>
+        <p>Adisil is a small kitchen in Tamil Nadu. We roast and stone-grind in
+        batches we can stand over — which is why the packets say three months and
+        not a year, and why you can read every ingredient on the back.</p>
+        <p>These are the mixes our own families eat: health mix in the morning,
+        kanji when someone needs feeding up, dosai maavu when there is no time to
+        soak and grind. Nothing in them is new. We have just packed them properly
+        so you can get them without making them yourself.</p>
+        <p class="story__sign">— Adisil Organic Food, Tamil Nadu</p>
       </div>
+    </div>
+  </section>`;
+}
+
+/* Every ingredient across the whole range, and which mixes use it.
+
+   The same ingredient is spelled differently on different packs — "Almond" on
+   one and "Almonds" on another, "Cardamom" and "Cardamom (Elaka)", and four
+   spellings of green gram. Counting those as separate ingredients would inflate
+   the headline number, so they are folded together here. Each entry below maps
+   the variants that appear in products.js onto one canonical name.
+
+   Things that only LOOK alike are deliberately NOT merged: idli rice, raw rice,
+   red rice and mappillai samba rice are different rices; bengal gram dal, split
+   bengal gram and roasted bengal gram are different preparations. */
+const INGREDIENT_ALIASES = [
+  { name: 'Almonds',                            variants: ['Almond', 'Almonds'] },
+  { name: 'Cashews',                            variants: ['Cashew', 'Cashews'] },
+  { name: 'Cardamom (Elaka)',                   variants: ['Cardamom', 'Cardamom (Elaka)'] },
+  { name: 'Dry Ginger (Sukku)',                 variants: ['Dry Ginger', 'Dry Ginger (Sukku)'] },
+  { name: 'Black Urad Dal (Karupu Ulundhu)',    variants: ['Black Urad Dal', 'Black Urad Dal (Karupu Ulundhu)'] },
+  { name: 'Black Kavuni Rice (Karuppu Kavuni Arisi)',
+    variants: ['Black Kavuni Rice', 'Karuppu Kavuni Arisi (Black Kavuni Rice)'] },
+  { name: 'Green Gram (Moong)',
+    variants: ['Green Gram (Paadi Payiru)', 'Green Gram (Pachai Payiru)',
+               'Green Moong Dal', 'Paasi Paruppu (Green Gram)'] },
+];
+
+const canonical = (() => {
+  const m = new Map();
+  INGREDIENT_ALIASES.forEach(a => a.variants.forEach(v => m.set(v.toLowerCase(), a.name)));
+  return n => m.get(n.trim().toLowerCase()) || n.trim();
+})();
+
+function ingredientIndexSection(o) {
+  const map = new Map();
+  products.forEach(p => p.ingredients.forEach(n => {
+    const k = canonical(n);
+    if (!map.has(k)) map.set(k, new Set());
+    map.get(k).add(p);
+  }));
+  const names = [...map.keys()].sort((a, b) => a.localeCompare(b));
+  if (!names.length) return '';
+
+  const items = names.map(n => {
+    const used = [...map.get(n)];
+    const many = used.length > 1;
+    return `<li${many ? ' class="is-shared"' : ''}${!many ? ` style="--pc:${used[0].colour}"` : ''}>` +
+           `${esc(n)}${many ? `<i>in ${used.length}</i>` : ''}</li>`;
+  }).join('');
+
+  return `
+  <section class="index" id="ingredients">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="kicker">Everything that goes in</p>
+        <h2>${names.length} ingredients across ${products.length} mixes. That is the whole list.</h2>
+        <p>Not "a blend of grains and pulses" — the actual names, the same ones
+        printed on the back of each packet. If something is not on this list, it is
+        not in anything we make.</p>
+      </header>
+      <ul class="index__wall" role="list">${items}
+      </ul>
+      <p class="index__foot">No preservatives, no added colour, no artificial
+      flavour, no anti-caking agent, no filler.</p>
     </div>
   </section>`;
 }
@@ -530,8 +614,8 @@ function heroSection(o) {
           <a class="hero__range-all" href="products.html">All ${products.length}, made in the same kitchen ${icon('chevron-right')}</a>
         </div>
 
-        <p class="hero__licence">FSSAI ${esc(B.fssai)} · Nothing added to make it keep
-        longer · 100g / 250g / 500g</p>
+        <p class="hero__licence">Nothing added to make it keep longer ·
+        100g / 250g / 500g · FSSAI licensed</p>
       </div>
 
       <div class="hero__table">
@@ -603,8 +687,6 @@ ${howToOrder(o)}
     </div>
   </section>
 
-${reviewsSection(o)}
-${enquirySection(o)}
 
   <section class="proof">
     <div class="wrap">
@@ -631,6 +713,11 @@ ${ingredientDiscs(o, products.find(p => p.slug === 'karupu-ulundhu-kanji'))}
       </div>
     </div>
   </section>
+${storySection(o)}
+${ingredientIndexSection(o)}
+${reviewsSection(o)}
+${enquirySection(o)}
+
 
 ${faqSection(o)}
 
